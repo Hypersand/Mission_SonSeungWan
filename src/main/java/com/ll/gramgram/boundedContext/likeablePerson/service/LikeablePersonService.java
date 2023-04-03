@@ -48,4 +48,21 @@ public class LikeablePersonService {
     public List<LikeablePerson> findByFromInstaMemberId(Long fromInstaMemberId) {
         return likeablePersonRepository.findByFromInstaMemberId(fromInstaMemberId);
     }
+
+    public LikeablePerson findById(Long id) {
+        return likeablePersonRepository.findById(id).orElseThrow();
+    }
+
+    @Transactional
+    public RsData<LikeablePerson> deleteLikeablePerson(InstaMember instaMember, LikeablePerson likeablePerson) {
+        String username = likeablePerson.getToInstaMember().getUsername();
+
+        if (!instaMember.getUsername().equals(likeablePerson.getFromInstaMemberUsername())) {
+            return RsData.of("F-3", "해당 항목을 삭제할 권한이 없습니다.");
+        }
+
+        likeablePersonRepository.delete(likeablePerson);
+
+        return RsData.of("S-1", username + "님이 당신의 호감목록에서 제외됐습니다.");
+    }
 }
