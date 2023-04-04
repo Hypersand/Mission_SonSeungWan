@@ -29,9 +29,6 @@ public class LikeablePersonControllerTests {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private LikeablePersonService likeablePersonService;
-
     @Test
     @DisplayName("등록 폼(인스타 인증을 안해서 폼 대신 메세지)")
     @WithUserDetails("user1")
@@ -178,9 +175,7 @@ public class LikeablePersonControllerTests {
                 .andDo(print());
 
 
-
         // THEN
-
         resultActions1
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("add"))
