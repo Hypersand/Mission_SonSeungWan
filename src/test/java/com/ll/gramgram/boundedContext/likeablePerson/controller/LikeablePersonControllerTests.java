@@ -1,7 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
 
-import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.containsString;
@@ -157,6 +155,9 @@ public class LikeablePersonControllerTests {
     @DisplayName("호감표시 등록 및 삭제")
     @WithUserDetails("user2")
     void t006() throws Exception {
+        // GIVEN
+        Long id = 3L;
+
         // WHEN
         ResultActions resultActions1 = mvc
                 .perform(post("/likeablePerson/add")
@@ -166,12 +167,9 @@ public class LikeablePersonControllerTests {
                 )
                 .andDo(print());
 
-        Long id = 3L;
 
         ResultActions resultActions2 = mvc
-                .perform(get("/likeablePerson/delete/{id}", id)
-                        .with(csrf()) // CSRF 키 생성
-                )
+                .perform(get("/likeablePerson/delete/{id}", id))
                 .andDo(print());
 
 
