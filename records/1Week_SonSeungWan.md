@@ -3,28 +3,30 @@
   - 이때, 현재 로그인한 사용자가 소유권이 있는지 확인
 - 삭제 후 호감목록 페이지로 다시 돌아와야 함.
 - 상황에 맞는 적절한 응답 데이터 작성
-- `LikeablePerson` 도메인 영역 안에서 해결 가능 할 것 같다.
+- `LikeablePerson` 영역 안에서 해결 가능 할 것 같다.
 
-### LikeablePersonRepository
+#### LikeablePersonRepository
 - [X]  삭제 요청 시, 넘어오는 `id`를 매개변수로 받아 `Optional` 객체 반환
 ---
-### LikeablePersonService
+#### LikeablePersonService
 
-#### 객체 반환 메서드
+###### 객체 반환 메서드
 - [X] 리포지토리를 통해 `Optional` 객체를 받고 검증 진행
 - [X] 검증 통과 시 `LikeablePerson` 객체 반환
 
-#### 삭제 메서드
+###### 삭제 메서드
 - [X] 현재 로그인 한 사용자가 호감을 표시한 사람이 맞는지 검증
 - [X] 검증 통과 시 삭제
 ---
-### LikeablePersonController
+#### LikeablePersonController
 - [X] 삭제할 `LikeablePerson` 객체 `id`를 경로 변수로 설정
 - [X] 서비스단으로 보낼 삭제에 필요한 객체 매개변수 설정
 - [X] 삭제가 정상적으로 안되면, 예외 처리
 - [X] 삭제 성공 시, 호감목록으로 리다이렉트 처리
-
 ---
+
+#### LikeablePersonControllerTests
+- [X] MockMvc를 이용한 호감표시 등록 및 삭제 테스트
 
 ### 1주차 미션 요약
 
