@@ -69,6 +69,10 @@ public class LikeablePersonController {
 
         RsData<LikeablePerson> deleteRsData = likeablePersonService.deleteLikeablePerson(instaMember, id);
 
+        if (deleteRsData.isFail()) {
+            return rq.historyBack(deleteRsData);
+        }
+
         return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
     }
 }
