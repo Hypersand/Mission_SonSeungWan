@@ -50,25 +50,20 @@ public class LikeablePersonService {
         return likeablePersonRepository.findByFromInstaMemberId(fromInstaMemberId);
     }
 
-    public Optional<LikeablePerson> findById(Long id) {
-
-        return likeablePersonRepository.findById(id);
-    }
-
     @Transactional
     public RsData<LikeablePerson> deleteLikeablePerson(InstaMember instaMember, Long id) {
 
-        Optional<LikeablePerson> opLikeablePerson = findById(id);
+        Optional<LikeablePerson> opLikeablePerson = likeablePersonRepository.findById(id);
 
         if (opLikeablePerson.isEmpty()) {
-            return RsData.of("F-3", "해당 항목을 삭제할 권한이 없습니다.");
+            return RsData.of("F-3", "해당 항목은 존재하지 않는 데이터입니다.");
         }
 
         LikeablePerson likeablePerson = opLikeablePerson.get();
         String username = likeablePerson.getToInstaMember().getUsername();
 
         if (!instaMember.getUsername().equals(likeablePerson.getFromInstaMemberUsername())) {
-            return RsData.of("F-3", "해당 항목을 삭제할 권한이 없습니다.");
+            return RsData.of("F-4", "해당 항목을 삭제할 권한이 없습니다.");
         }
 
         likeablePersonRepository.delete(likeablePerson);
