@@ -161,8 +161,6 @@ public class LikeablePersonControllerTests {
     @DisplayName("호감표시 등록 및 삭제")
     @WithUserDetails("user2")
     void t006() throws Exception {
-        // GIVEN
-        Long id = 3L;
 
         // WHEN
         ResultActions resultActions1 = mvc
@@ -173,18 +171,25 @@ public class LikeablePersonControllerTests {
                 )
                 .andDo(print());
 
+        //THEN
+        resultActions1
+                .andExpect(handler().handlerType(LikeablePersonController.class))
+                .andExpect(handler().methodName("add"))
+                .andExpect(status().is3xxRedirection());
 
+        assertThat(likeablePersonRepository.findById(3L).isPresent()).isTrue();
+
+
+        // GIVEN
+        Long id = 3L;
+
+        // WHEN
         ResultActions resultActions2 = mvc
                 .perform(get("/likeablePerson/delete/{id}", id))
                 .andDo(print());
 
 
         // THEN
-        resultActions1
-                .andExpect(handler().handlerType(LikeablePersonController.class))
-                .andExpect(handler().methodName("add"))
-                .andExpect(status().is3xxRedirection());
-
         resultActions2
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("delete"))
