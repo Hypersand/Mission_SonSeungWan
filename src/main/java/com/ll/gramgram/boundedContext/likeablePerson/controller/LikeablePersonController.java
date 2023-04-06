@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
@@ -26,6 +27,7 @@ public class LikeablePersonController {
     private final LikeablePersonService likeablePersonService;
 
     @GetMapping("/add")
+    @PreAuthorize("isAuthenticated()")
     public String showAdd() {
         return "usr/likeablePerson/add";
     }
@@ -38,6 +40,7 @@ public class LikeablePersonController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("isAuthenticated()")
     public String add(@Valid AddForm addForm) {
         RsData<LikeablePerson> createRsData = likeablePersonService.like(rq.getMember(), addForm.getUsername(), addForm.getAttractiveTypeCode());
 
@@ -49,6 +52,7 @@ public class LikeablePersonController {
     }
 
     @GetMapping("/list")
+    @PreAuthorize("isAuthenticated()")
     public String showList(Model model) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
@@ -62,6 +66,7 @@ public class LikeablePersonController {
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
     public String delete(@PathVariable Long id) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
