@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -59,18 +58,5 @@ public class LikeablePersonController {
         }
 
         return "usr/likeablePerson/list";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        InstaMember instaMember = rq.getMember().getInstaMember();
-
-        RsData<LikeablePerson> deleteRsData = likeablePersonService.deleteLikeablePerson(instaMember, id);
-
-        if (deleteRsData.isFail()) {
-            return rq.historyBack(deleteRsData);
-        }
-
-        return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
     }
 }
