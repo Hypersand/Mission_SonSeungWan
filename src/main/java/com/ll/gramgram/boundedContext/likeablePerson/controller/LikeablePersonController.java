@@ -1,6 +1,5 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
@@ -10,12 +9,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -65,7 +62,7 @@ public class LikeablePersonController {
         return "usr/likeablePerson/list";
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("isAuthenticated()")
     public String delete(@PathVariable Long id) {
         InstaMember instaMember = rq.getMember().getInstaMember();
