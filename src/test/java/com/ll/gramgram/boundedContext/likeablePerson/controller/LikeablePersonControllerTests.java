@@ -184,7 +184,7 @@ public class LikeablePersonControllerTests {
 
         // WHEN
         ResultActions resultActions2 = mvc
-                .perform(delete("/likeablePerson/delete/{id}", id)
+                .perform(delete("/likeablePerson/{id}", id)
                         .with(csrf()))
                 .andDo(print());
 
