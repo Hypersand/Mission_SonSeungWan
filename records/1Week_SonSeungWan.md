@@ -7,6 +7,7 @@
 
 #### LikeablePersonRepository
 - [X]  삭제 요청 시, 넘어오는 `id`를 매개변수로 받아 `Optional` 객체 반환
+  <br> -->  스프링 데이터 Jpa가 findById 메서드를 자동 생성
 
 #### LikeablePersonService
 
@@ -18,8 +19,8 @@
 #### LikeablePersonController
 - [X] 삭제할 `LikeablePerson` 객체 `id`를 경로 변수로 설정
 - [X] 서비스단으로 보낼 삭제에 필요한 객체 매개변수 설정
-- [X] 삭제가 정상적으로 안되면, 예외 처리
-- [X] 삭제 성공 시, 호감목록으로 리다이렉트 처리
+- [X] 반환받은 RsData 객체에 대한 실패 처리
+- [X] 호감목록으로 RsData와 함께 리다이렉트 처리
 
 #### LikeablePersonControllerTests
 - [X] MockMvc를 이용한 호감표시 등록 및 삭제 테스트
@@ -47,10 +48,11 @@
   - Assertions를 이용해서 서비스와 리포지터리도 테스트 했으면 좋았을 것 같다.
   
   
-  **[Refactoring] (피어리뷰 기반)** 
+  **[Refactoring]** 
 - [X] JpaRepository PK 타입 수정
 - [X] 오류 처리 메시지 수정
-- [X] Controller에서 불필요한 처리 삭제
+- [X] Assertions를 이용한 삭제 테스트 추가
+
   
 
 
