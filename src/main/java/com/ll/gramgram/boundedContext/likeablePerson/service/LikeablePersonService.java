@@ -51,7 +51,7 @@ public class LikeablePersonService {
     }
 
     @Transactional
-    public RsData<LikeablePerson> deleteLikeablePerson(InstaMember instaMember, Long id) {
+    public RsData<LikeablePerson> delete(InstaMember instaMember, Long id) {
 
         Optional<LikeablePerson> opLikeablePerson = likeablePersonRepository.findById(id);
 
