@@ -62,7 +62,7 @@ public class LikeablePersonService {
         LikeablePerson likeablePerson = opLikeablePerson.get();
         String username = likeablePerson.getToInstaMember().getUsername();
 
-        if (!instaMember.getUsername().equals(likeablePerson.getFromInstaMemberUsername())) {
+        if (!instaMember.getId().equals(likeablePerson.getFromInstaMember().getId())) {
             return RsData.of("F-4", "해당 항목을 삭제할 권한이 없습니다.");
         }
 
