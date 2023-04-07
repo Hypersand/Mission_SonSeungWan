@@ -57,24 +57,36 @@ public class LikeablePersonService {
         return likeablePersonRepository.findByFromInstaMemberId(fromInstaMemberId);
     }
 
-    @Transactional
-    public RsData<LikeablePerson> delete(InstaMember instaMember, Long id) {
+    public Optional<LikeablePerson> findById(Long id) {
+        return likeablePersonRepository.findById(id);
+    }
 
-        Optional<LikeablePerson> opLikeablePerson = likeablePersonRepository.findById(id);
 
-        if (opLikeablePerson.isEmpty()) {
+    public RsData<LikeablePerson> canDelete(LikeablePerson likeablePerson, Member member) {
+
+        if (likeablePerson == null) {
             return RsData.of("F-3", "해당 항목은 존재하지 않는 데이터입니다.");
         }
 
-        LikeablePerson likeablePerson = opLikeablePerson.get();
-        String username = likeablePerson.getToInstaMember().getUsername();
+        Long currentInstaMemberId = member.getInstaMember().getId();
 
-        if (!instaMember.getId().equals(likeablePerson.getFromInstaMember().getId())) {
+        Long fromInstaMemberId = likeablePerson.getFromInstaMember().getId();
+
+        if (currentInstaMemberId != fromInstaMemberId) {
             return RsData.of("F-4", "해당 항목을 삭제할 권한이 없습니다.");
         }
 
+        return RsData.of("S-1", "삭제 가능합니다.");
+    }
+
+
+    @Transactional
+    public RsData<LikeablePerson> delete(LikeablePerson likeablePerson) {
+
+        String toInstaUsername = likeablePerson.getToInstaMember().getUsername();
+
         likeablePersonRepository.delete(likeablePerson);
 
-        return RsData.of("S-1", username + "님이 당신의 호감목록에서 제외됐습니다.");
+        return RsData.of("S-1", toInstaUsername + "님이 당신의 호감목록에서 제외됐습니다.");
     }
 }
