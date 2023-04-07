@@ -1,6 +1,8 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
 
+import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -26,6 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LikeablePersonControllerTests {
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private LikeablePersonRepository likeablePersonRepository;
 
     @Test
     @DisplayName("등록 폼(인스타 인증을 안해서 폼 대신 메세지)")
@@ -148,5 +153,48 @@ public class LikeablePersonControllerTests {
                         <span class="toInstaMember_attractiveTypeDisplayName">성격</span>
                         """.stripIndent().trim())));
         ;
+    }
+
+
+    @Test
+    @DisplayName("호감표시 등록 및 삭제")
+    @WithUserDetails("user2")
+    void t006() throws Exception {
+
+        // WHEN
+        ResultActions resultActions1 = mvc
+                .perform(post("/likeablePerson/add")
+                        .with(csrf()) // CSRF 키 생성
+                        .param("username", "bigsand")
+                        .param("attractiveTypeCode", "1")
+                )
+                .andDo(print());
+
+        //THEN
+        resultActions1
+                .andExpect(handler().handlerType(LikeablePersonController.class))
+                .andExpect(handler().methodName("add"))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(likeablePersonRepository.findById(3L).isPresent()).isTrue();
+
+
+        // GIVEN
+        Long id = 3L;
+
+        // WHEN
+        ResultActions resultActions2 = mvc
+                .perform(delete("/likeablePerson/{id}", id)
+                        .with(csrf()))
+                .andDo(print());
+
+
+        // THEN
+        resultActions2
+                .andExpect(handler().handlerType(LikeablePersonController.class))
+                .andExpect(handler().methodName("delete"))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(likeablePersonRepository.findById(3L).isEmpty()).isTrue();
     }
 }

@@ -9,8 +9,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,7 @@ public class LikeablePersonController {
     private final LikeablePersonService likeablePersonService;
 
     @GetMapping("/add")
+    @PreAuthorize("isAuthenticated()")
     public String showAdd() {
         return "usr/likeablePerson/add";
     }
@@ -37,6 +40,7 @@ public class LikeablePersonController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("isAuthenticated()")
     public String add(@Valid AddForm addForm) {
         RsData<LikeablePerson> createRsData = likeablePersonService.like(rq.getMember(), addForm.getUsername(), addForm.getAttractiveTypeCode());
 
@@ -48,15 +52,37 @@ public class LikeablePersonController {
     }
 
     @GetMapping("/list")
+    @PreAuthorize("isAuthenticated()")
     public String showList(Model model) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
         // 인스타인증을 했는지 체크
         if (instaMember != null) {
-            List<LikeablePerson> likeablePeople = likeablePersonService.findByFromInstaMemberId(instaMember.getId());
+            // 해당 인스타회원이 좋아하는 사람들 목록
+            List<LikeablePerson> likeablePeople = instaMember.getFromLikeablePeople();
             model.addAttribute("likeablePeople", likeablePeople);
         }
 
         return "usr/likeablePerson/list";
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(@PathVariable Long id) {
+        LikeablePerson likeablePerson = likeablePersonService.findById(id).orElse(null);
+
+        RsData<LikeablePerson> canDeleteRsData = likeablePersonService.canDelete(likeablePerson, rq.getMember());
+
+        if (canDeleteRsData.isFail()) {
+            return rq.historyBack(canDeleteRsData);
+        }
+
+        RsData<LikeablePerson> deleteRsData = likeablePersonService.delete(likeablePerson);
+
+        if (deleteRsData.isFail()) {
+            return rq.historyBack(deleteRsData);
+        }
+
+        return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
     }
 }
