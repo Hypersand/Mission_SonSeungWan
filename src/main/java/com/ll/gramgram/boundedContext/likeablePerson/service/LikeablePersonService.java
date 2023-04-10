@@ -33,6 +33,10 @@ public class LikeablePersonService {
         InstaMember fromInstaMember = member.getInstaMember();
         InstaMember toInstaMember = instaMemberService.findByUsernameOrCreate(username).getData();
 
+        if (!isRegisteredToInstaMember(fromInstaMember, toInstaMember)) {
+            return RsData.of("F-5", username + "는 이미 호감표시를 등록한 인스타 유저입니다.");
+        }
+
         LikeablePerson likeablePerson = LikeablePerson
                 .builder()
                 .fromInstaMember(fromInstaMember) // 호감을 표시하는 사람의 인스타 멤버
@@ -88,5 +92,17 @@ public class LikeablePersonService {
         likeablePersonRepository.delete(likeablePerson);
 
         return RsData.of("S-1", toInstaUsername + "님이 당신의 호감목록에서 제외됐습니다.");
+    }
+
+    public boolean isRegisteredToInstaMember(InstaMember fromInstaMember, InstaMember toInstaMember) {
+        List<LikeablePerson> likeablePersonList = likeablePersonRepository.findByFromInstaMemberId(fromInstaMember.getId());
+
+        for (LikeablePerson likeablePerson : likeablePersonList) {
+            if (likeablePerson.getToInstaMember().equals(toInstaMember)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
