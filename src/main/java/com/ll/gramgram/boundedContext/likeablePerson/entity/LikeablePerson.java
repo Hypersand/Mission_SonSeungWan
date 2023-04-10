@@ -45,4 +45,8 @@ public class LikeablePerson {
             default -> "능력";
         };
     }
+
+    public void update(int attractiveTypeCode) {
+        this.attractiveTypeCode = attractiveTypeCode;
+    }
 }
