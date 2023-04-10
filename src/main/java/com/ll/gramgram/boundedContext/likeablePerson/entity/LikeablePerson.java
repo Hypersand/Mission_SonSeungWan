@@ -48,5 +48,6 @@ public class LikeablePerson {
 
     public void update(int attractiveTypeCode) {
         this.attractiveTypeCode = attractiveTypeCode;
+        this.modifyDate = LocalDateTime.now();
     }
 }
