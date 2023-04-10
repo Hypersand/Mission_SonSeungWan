@@ -37,6 +37,10 @@ public class LikeablePersonService {
             return RsData.of("F-5", username + "는 이미 호감표시를 등록한 인스타 유저입니다.");
         }
 
+        if (!canRegisterToInstaMember(fromInstaMember)) {
+            return RsData.of("F-6", "11명 이상의 호감상대를 등록 할 수 없습니다.");
+        }
+
         LikeablePerson likeablePerson = LikeablePerson
                 .builder()
                 .fromInstaMember(fromInstaMember) // 호감을 표시하는 사람의 인스타 멤버
@@ -101,6 +105,15 @@ public class LikeablePersonService {
             if (likeablePerson.getToInstaMember().equals(toInstaMember)) {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    public boolean canRegisterToInstaMember(InstaMember fromInstaMember) {
+        List<LikeablePerson> likeablePersonList = likeablePersonRepository.findByFromInstaMemberId(fromInstaMember.getId());
+        if (likeablePersonList.size() >= 10) {
+            return false;
         }
 
         return true;
