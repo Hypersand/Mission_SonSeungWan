@@ -35,13 +35,13 @@ public class LikeablePersonService {
 
         LikeablePerson likeablePerson = getLikeablePerson(fromInstaMember, toInstaMember);
 
-        if (!isRegisteredToInstaMember(fromInstaMember, toInstaMember)) {
+        if (!isRegisteredToInstaMember(likeablePerson)) {
 
             if (canModify(likeablePerson, attractiveTypeCode)) {
                 String oldAttractiveType = likeablePerson.getAttractiveTypeDisplayName();
                 likeablePerson.update(attractiveTypeCode);
                 String newAttractiveType = likeablePerson.getAttractiveTypeDisplayName();
-                return RsData.of("S-2", username+"님에 대한 호감사유를 " +oldAttractiveType+"에서 "+newAttractiveType +"으로 변경합니다.");
+                return RsData.of("S-2", username + "님에 대한 호감사유를 " + oldAttractiveType + "에서 " + newAttractiveType + "으로 변경합니다.");
             }
 
             return RsData.of("F-5", username + "는 이미 호감표시를 등록한 인스타 유저입니다.");
@@ -112,13 +112,9 @@ public class LikeablePersonService {
         return RsData.of("S-1", toInstaUsername + "님이 당신의 호감목록에서 제외됐습니다.");
     }
 
-    public boolean isRegisteredToInstaMember(InstaMember fromInstaMember, InstaMember toInstaMember) {
-        List<LikeablePerson> likeablePersonList = likeablePersonRepository.findByFromInstaMemberId(fromInstaMember.getId());
-
-        for (LikeablePerson likeablePerson : likeablePersonList) {
-            if (likeablePerson.getToInstaMember().equals(toInstaMember)) {
-                return false;
-            }
+    public boolean isRegisteredToInstaMember(LikeablePerson likeablePerson) {
+        if (likeablePerson != null) {
+            return false;
         }
 
         return true;
