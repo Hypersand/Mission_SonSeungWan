@@ -121,8 +121,9 @@ public class LikeablePersonService {
     }
 
     public boolean canRegisterToInstaMember(InstaMember fromInstaMember) {
-        List<LikeablePerson> likeablePersonList = likeablePersonRepository.findByFromInstaMemberId(fromInstaMember.getId());
-        if (likeablePersonList.size() >= 10) {
+        Long size = likeablePersonRepository.countByFromInstaMemberId(fromInstaMember.getId());
+
+        if (size >= 10) {
             return false;
         }
 
