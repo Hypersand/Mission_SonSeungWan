@@ -1,5 +1,6 @@
 package com.ll.gramgram.base.security;
 
+import com.ll.gramgram.base.security.naver.NaverUserInfo;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import com.ll.gramgram.boundedContext.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String oauthId = oAuth2User.getName();
+        String oauthId;
 
         String providerTypeCode = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
+
+        if (providerTypeCode.equals("NAVER")) {
+            NaverUserInfo naverInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
+            oauthId = naverInfo.getId();
+        }
+
+        else {
+            oauthId = oAuth2User.getName();
+        }
 
         String username = providerTypeCode + "__%s".formatted(oauthId);
 
