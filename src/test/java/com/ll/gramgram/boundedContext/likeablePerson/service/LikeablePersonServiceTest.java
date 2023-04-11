@@ -1,7 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.service;
 
 import com.ll.gramgram.base.rsData.RsData;
-import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
@@ -32,14 +31,12 @@ class LikeablePersonServiceTest {
     @DisplayName("케이스 4 - 중복 호감 표시 X")
     @WithUserDetails("user3")
     void t001() {
+
         //given
         Member member = memberService.findByUsername("user3").get();
-        InstaMember instaMember = member.getInstaMember();
-
 
         //when
         RsData<LikeablePerson> likeRsData = likeablePersonService.like(member, "insta_user4", 1);
-
 
         //then
         assertThat(likeRsData.getResultCode()).isEqualTo("F-5");
@@ -51,10 +48,9 @@ class LikeablePersonServiceTest {
     @DisplayName("케이스 5 - 11명 이상의 호감 상대 등록 X")
     @WithUserDetails("user2")
     void t002() {
+
         //given
         Member member = memberService.findByUsername("user2").get();
-        InstaMember instaMember = member.getInstaMember();
-
         for (int i = 5; i < 15; i++) {
             likeablePersonService.like(member, "insta_user"+i, 1);
         }
@@ -74,12 +70,9 @@ class LikeablePersonServiceTest {
 
         //given
         Member member = memberService.findByUsername("user3").get();
-        InstaMember instaMember = member.getInstaMember();
-
 
         //when
         RsData<LikeablePerson> likeRsData = likeablePersonService.like(member, "insta_user4", 2);
-
 
         //then
         assertThat(likeRsData.getResultCode()).isEqualTo("S-2");
