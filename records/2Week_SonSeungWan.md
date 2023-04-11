@@ -20,23 +20,29 @@
 ---
 ### 선택미션 - 네이버 소셜 로그인
 - [X] application.yml에 인증 정보 추가
-- [X] Naver Resource Server로부터 받은 데이터 중 response의 id만 뽑아내기
+- [X] Naver Resource Server로부터 받은 데이터 중 response의 email만 뽑아내기
   <img alt="img.png" src="img.png"/>
 ---
 
 ### 2주차 미션 요약
 
-**[접근 방법]**
+#### **[접근 방법]**
 - 일단 생각나는 대로 무작정 구현.
 - 위캔에 올라온 SQL 쿼리를 보면서 내가 만든 메서드의 동작 쿼리와 비교
 - 리팩토링 진행
 
 
-**[특이사항]**
+#### **[특이사항]**
+
+**선택미션 삽질**
 - Naver OAuth2를 통해 받은 id 값은 Base64 형식이라 문자가 지저분함.
   <img alt="img_2.png" src="img_2.png"/>
 - 이 문자를 디코딩하여 깔끔하게 만들고자 시도했지만 실패
-- 확인해보니, 애초에 숫자가 아닌 문자열을 Base64 형식으로 인코딩한거라 이상하게 나오는 것 같다. 
+- ChatGpt한테 디코딩을 시켰는데 결과가 다음과 같이 나왔다.
+<img alt="img_4.png" src="img_4.png"/>
+- 확인해보니, 애초에 숫자가 아닌 문자열을 Base64 형식으로 인코딩한거라 이상하게 나오는 것 같다.
+- 최종적으로, 네이버 로그인의 경우, email을 id로 설정했다.
+  <img alt="img_3.png" src="img_3.png"/>
 
 **[Refactoring]**
 
