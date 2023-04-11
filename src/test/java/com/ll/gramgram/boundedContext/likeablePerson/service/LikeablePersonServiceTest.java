@@ -29,7 +29,6 @@ class LikeablePersonServiceTest {
 
     @Test
     @DisplayName("케이스 4 - 중복 호감 표시 X")
-    @WithUserDetails("user3")
     void t001() {
 
         //given
@@ -46,7 +45,6 @@ class LikeablePersonServiceTest {
 
     @Test
     @DisplayName("케이스 5 - 11명 이상의 호감 상대 등록 X")
-    @WithUserDetails("user2")
     void t002() {
 
         //given
@@ -65,7 +63,6 @@ class LikeablePersonServiceTest {
 
     @Test
     @DisplayName("케이스 6 - 기존의 사유와 다른 사유로 호감을 표시하는 경우에는 성공 처리")
-    @WithUserDetails("user3")
     void t003() {
 
         //given
