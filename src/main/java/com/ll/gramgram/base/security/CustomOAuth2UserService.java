@@ -5,6 +5,7 @@ import com.ll.gramgram.boundedContext.member.entity.Member;
 import com.ll.gramgram.boundedContext.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -14,6 +15,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -37,6 +40,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (providerTypeCode.equals("NAVER")) {
             NaverUserInfo naverInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
             oauthId = naverInfo.getId();
+//            byte[] bytes = Base64.decodeBase64URLSafe(Arrays.toString(oauthId.getBytes(StandardCharsets.UTF_8)));
+//            log.info("bytes :" + Arrays.toString(bytes));
+//            oauthId = new String(bytes, StandardCharsets.UTF_8);
         }
 
         else {
