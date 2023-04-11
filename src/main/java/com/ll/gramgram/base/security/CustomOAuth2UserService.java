@@ -39,7 +39,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (providerTypeCode.equals("NAVER")) {
             NaverUserInfo naverInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
-            oauthId = naverInfo.getId();
+            oauthId = naverInfo.getEmail();
 //            byte[] bytes = Base64.decodeBase64URLSafe(Arrays.toString(oauthId.getBytes(StandardCharsets.UTF_8)));
 //            log.info("bytes :" + Arrays.toString(bytes));
 //            oauthId = new String(bytes, StandardCharsets.UTF_8);
