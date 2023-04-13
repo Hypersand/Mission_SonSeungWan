@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.service;
 
+import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
@@ -117,21 +118,14 @@ public class LikeablePersonService {
     }
 
     public boolean isRegisteredToInstaMember(LikeablePerson likeablePerson) {
-        if (likeablePerson != null) {
-            return false;
-        }
-
-        return true;
+        return likeablePerson == null;
     }
 
     public boolean canRegisterToInstaMember(InstaMember fromInstaMember) {
+        Long likeablePersonFromMax = AppConfig.getLikeablePersonFromMax();
         Long size = likeablePersonRepository.countByFromInstaMemberId(fromInstaMember.getId());
 
-        if (size >= 10) {
-            return false;
-        }
-
-        return true;
+        return size < likeablePersonFromMax;
     }
 
     public boolean canModify(LikeablePerson likeablePerson, int attractiveTypeCode) {
