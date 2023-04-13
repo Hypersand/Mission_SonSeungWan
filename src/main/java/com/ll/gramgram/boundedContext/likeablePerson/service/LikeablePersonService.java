@@ -107,6 +107,10 @@ public class LikeablePersonService {
 
         String toInstaUsername = likeablePerson.getToInstaMember().getUsername();
 
+        likeablePerson.getFromInstaMember().removeFromLikeablePerson(likeablePerson);
+
+        likeablePerson.getToInstaMember().removeToLikeablePerson(likeablePerson);
+
         likeablePersonRepository.delete(likeablePerson);
 
         return RsData.of("S-1", toInstaUsername + "님이 당신의 호감목록에서 제외됐습니다.");
