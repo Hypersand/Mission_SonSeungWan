@@ -49,7 +49,7 @@ public class LikeablePersonService {
         }
 
         if (!canRegisterToInstaMember(fromInstaMember)) {
-            return RsData.of("F-6", "11명 이상의 호감상대를 등록 할 수 없습니다.");
+            return RsData.of("F-6", AppConfig.getLikeablePersonFromMax()+"명 이상의 호감상대를 등록 할 수 없습니다.");
         }
 
         likeablePerson = LikeablePerson
