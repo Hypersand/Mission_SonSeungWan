@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.service;
 
+import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
@@ -44,21 +45,22 @@ class LikeablePersonServiceTest {
     }
 
     @Test
-    @DisplayName("케이스 5 - 11명 이상의 호감 상대 등록 X")
+    @DisplayName("케이스 5 - max 인원 이상의 호감 상대 등록 X")
     void t002() {
 
         //given
+        Long max = AppConfig.getLikeablePersonFromMax();
         Member member = memberService.findByUsername("user2").get();
-        for (int i = 5; i < 15; i++) {
-            likeablePersonService.like(member, "insta_user"+i, 1);
+        for (int i = 1; i <= max; i++) {
+            likeablePersonService.like(member, "인스타유저"+i, 1);
         }
 
         //when
-        RsData<LikeablePerson> likeRsData = likeablePersonService.like(member, "insta_user" + 15, 2);
+        RsData<LikeablePerson> likeRsData = likeablePersonService.like(member, "인스타유저" + (max+1), 2);
 
         //then
         assertThat(likeRsData.getResultCode()).isEqualTo("F-6");
-        assertThat(likeRsData.getMsg()).isEqualTo("11명 이상의 호감상대를 등록 할 수 없습니다.");
+        assertThat(likeRsData.getMsg()).isEqualTo(max+"명 이상의 호감상대를 등록 할 수 없습니다.");
     }
 
     @Test
