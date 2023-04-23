@@ -167,7 +167,7 @@ public class MemberControllerTests {
                         <input type="password" name="password"
                         """.stripIndent().trim())))
                 .andExpect(content().string(containsString("""
-                        <input type="submit" value="로그인"
+                        id="btn-login-1"
                         """.stripIndent().trim())));
     }
 
