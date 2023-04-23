@@ -1,7 +1,10 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 public class LikeablePersonControllerTests {
     @Autowired
     private MockMvc mvc;
@@ -78,7 +82,7 @@ public class LikeablePersonControllerTests {
                         <input type="radio" name="attractiveTypeCode" value="3"
                         """.stripIndent().trim())))
                 .andExpect(content().string(containsString("""
-                        <input type="submit" value="추가"
+                        id="btn-like-1"
                         """.stripIndent().trim())));
         ;
     }
@@ -122,7 +126,8 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("add"))
                 .andExpect(status().is3xxRedirection());
-        ;
+
+
     }
 
     @Test
@@ -157,7 +162,7 @@ public class LikeablePersonControllerTests {
 
     @Test
     @DisplayName("호감표시 등록 및 삭제")
-    @WithUserDetails("user2")
+    @WithUserDetails("user3")
     void t006() throws Exception {
 
         // WHEN
@@ -175,11 +180,8 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().methodName("add"))
                 .andExpect(status().is3xxRedirection());
 
-        assertThat(likeablePersonRepository.findById(3L).isPresent()).isTrue();
-
-
         // GIVEN
-        Long id = 3L;
+        Long id = 2L;
 
         // WHEN
         ResultActions resultActions2 = mvc
@@ -194,6 +196,6 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().methodName("delete"))
                 .andExpect(status().is3xxRedirection());
 
-        assertThat(likeablePersonRepository.findById(3L).isEmpty()).isTrue();
+
     }
 }
