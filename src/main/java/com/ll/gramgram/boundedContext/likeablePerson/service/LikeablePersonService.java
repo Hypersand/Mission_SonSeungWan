@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -68,6 +69,7 @@ public class LikeablePersonService {
 
         // 너를 좋아하는 호감표시 생겼어.
         toInstaMember.addToLikeablePerson(likeablePerson);
+        toInstaMember.increaseLikesCount(fromInstaMember.getGender(), attractiveTypeCode);
 
         return RsData.of("S-1", "입력하신 인스타유저(%s)를 호감상대로 등록되었습니다.".formatted(username), likeablePerson);
     }
@@ -111,11 +113,57 @@ public class LikeablePersonService {
         likeablePerson.getFromInstaMember().removeFromLikeablePerson(likeablePerson);
 
         likeablePerson.getToInstaMember().removeToLikeablePerson(likeablePerson);
+        likeablePerson.getToInstaMember().decreaseLikesCount(likeablePerson.getFromInstaMember().getGender(), likeablePerson.getAttractiveTypeCode());
 
         likeablePersonRepository.delete(likeablePerson);
 
         return RsData.of("S-1", toInstaUsername + "님이 당신의 호감목록에서 제외됐습니다.");
     }
+
+    @Transactional
+    public RsData<LikeablePerson> modifyAttractive(Member member, Long id, int attractiveTypeCode) {
+        LikeablePerson likeablePerson = findById(id).orElse(null);
+
+        if (likeablePerson == null) {
+            return RsData.of("F-3", "해당 항목은 존재하지 않는 데이터입니다.");
+        }
+
+        if (member.getInstaMember().getId() != likeablePerson.getFromInstaMember().getId()) {
+            return RsData.of("F-2", "해당 호감표시를 수정할 권한이 없습니다.");
+        }
+
+        RsData<LikeablePerson> canModifyRsData = canModifyLike(member, likeablePerson);
+
+        if (canModifyRsData.isFail()) {
+            return canModifyRsData;
+        }
+
+        likeablePerson.update(attractiveTypeCode);
+
+        return canModifyRsData;
+
+    }
+
+    public RsData<LikeablePerson> canModifyLike(Member member, LikeablePerson likeablePerson) {
+
+        if (!member.hasConnectedInstaMember()) {
+            return RsData.of("F-1", "먼저 본인의 인스타그램 아이디를 입력해주세요.");
+        }
+
+        if (likeablePerson == null) {
+            return RsData.of("F-3", "해당 항목은 존재하지 않는 데이터입니다.");
+        }
+
+        InstaMember fromInstaMember = member.getInstaMember();
+
+        if (!Objects.equals(likeablePerson.getFromInstaMember().getId(), fromInstaMember.getId())) {
+            return RsData.of("F-2", "해당 호감표시를 수정할 권한이 없습니다.");
+        }
+
+        return RsData.of("S-1", "호감표시 수정이 가능합니다.");
+    }
+
+
 
     public boolean isRegisteredToInstaMember(LikeablePerson likeablePerson) {
         return likeablePerson == null;
@@ -140,5 +188,6 @@ public class LikeablePersonService {
 
         return true;
     }
+
 
 }
