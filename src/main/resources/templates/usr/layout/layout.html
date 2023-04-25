@@ -33,28 +33,28 @@
 <!-- 테일윈드 불러오기 -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- 공통 상단 -->
-<header>
-    <a href="/" class="btn btn-link">메인</a>
-    <a href="/member/login" th:if="${@rq.logout}" class="btn btn-link">로그인</a>
-    <a href="/member/join" th:if="${@rq.logout}" class="btn btn-link">회원가입</a>
-    <a href="/member/me" th:if="${@rq.login}" class="btn btn-link">
-        <i class="fa-solid fa-user"></i>
-        <span th:text="${@rq.member.username}"></span>
-    </a>
-    <a href="/instaMember/connect" th:if="${@rq.login}" class="btn btn-link">본인의 인스타그램 정보 입력</a>
-    <a href="/likeablePerson/add" th:if="${@rq.login}" class="btn btn-link">호감표시</a>
-    <a href="/likeablePerson/list" th:if="${@rq.login}" class="btn btn-link">호감목록</a>
-    <a href="javascript:;" th:if="${@rq.login}" onclick="$(this).next().submit();" class="btn btn-link">로그아웃</a>
-    <form th:if="${@rq.login}" hidden th:action="|/member/logout|" method="POST"></form>
-    <span th:if="${@rq.login}" th:text="|${@rq.member.username}님 환영합니다.|"></span>
-    <span th:if="${@rq.login and @rq.member.hasConnectedInstaMember()}"
-          th:text="|(${#lists.size(@rq.member.instaMember.toLikeablePeople)}/${#lists.size(@rq.member.instaMember.fromLikeablePeople)})|">
-    </span>
-</header>
+<!--&lt;!&ndash; 공통 상단 &ndash;&gt;-->
+<!--<header>-->
+<!--    <a href="/" class="btn btn-link">메인</a>-->
+<!--    <a href="/member/login" th:if="${@rq.logout}" class="btn btn-link">로그인</a>-->
+<!--    <a href="/member/join" th:if="${@rq.logout}" class="btn btn-link">회원가입</a>-->
+<!--    <a href="/member/me" th:if="${@rq.login}" class="btn btn-link">-->
+<!--        <i class="fa-solid fa-user"></i>-->
+<!--        <span th:text="${@rq.member.username}"></span>-->
+<!--    </a>-->
+<!--    <a href="/instaMember/connect" th:if="${@rq.login}" class="btn btn-link">본인의 인스타그램 정보 입력</a>-->
+<!--    <a href="/likeablePerson/add" th:if="${@rq.login}" class="btn btn-link">호감표시</a>-->
+<!--    <a href="/likeablePerson/list" th:if="${@rq.login}" class="btn btn-link">호감목록</a>-->
+<!--    <a href="javascript:;" th:if="${@rq.login}" onclick="$(this).next().submit();" class="btn btn-link">로그아웃</a>-->
+<!--    <form th:if="${@rq.login}" hidden th:action="|/member/logout|" method="POST"></form>-->
+<!--    <span th:if="${@rq.login}" th:text="|${@rq.member.username}님 환영합니다.|"></span>-->
+<!--    <span th:if="${@rq.login and @rq.member.hasConnectedInstaMember()}"-->
+<!--          th:text="|(${#lists.size(@rq.member.instaMember.toLikeablePeople)}/${#lists.size(@rq.member.instaMember.fromLikeablePeople)})|">-->
+<!--    </span>-->
+<!--</header>-->
 <!-- min-h-screen : min-height:100vh; -->
 <div class="min-h-screen flex flex-col">
-    <header class="sticky top-0">
+    <header class="sticky top-0 z-50">
         <div class="navbar max-w-2xl mx-auto bg-base-100">
             <div class="navbar-start">
                 <div class="dropdown">
@@ -67,23 +67,27 @@
                     </label>
                     <ul tabindex="0"
                         class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                        <li th:if="${@rq.logout}"><a href="/member/login"><i
+                        <li th:if="${@rq.logout}"><a href="/usr/member/login"><i
                                 class="fa-solid fa-arrow-right-to-bracket"></i> 로그인</a>
                         </li>
-                        <li th:if="${@rq.logout}"><a href="/member/join"><i class="fa-solid fa-user-plus"></i> 회원가입</a>
+                        <li th:if="${@rq.logout}"><a href="/usr/member/join"><i class="fa-solid fa-user-plus"></i> 회원가입</a>
                         </li>
-                        <li th:if="${@rq.login}"><a href="/member/me"><i class="fa-solid fa-user"></i> 내 정보</a></li>
+                        <li th:if="${@rq.login}"><a href="/usr/member/me"><i class="fa-solid fa-user"></i> 내 정보</a></li>
                         <li th:if="${@rq.login}">
                             <a href="javascript:;" onclick="$(this).next().submit();">
                                 <i class="fa-solid fa-arrow-right-from-bracket"></i> 로그아웃
                             </a>
-                            <form class="!hidden" hidden th:action="|/member/logout|" method="POST"></form>
+                            <form class="!hidden" hidden th:action="|/usr/member/logout|" method="POST"></form>
                         </li>
-                        <li th:if="${@rq.login}"><a href="/instaMember/connect"><i class="fa-brands fa-instagram"></i>
-                            인스타아이디 입력</a></li>
-                        <li th:if="${@rq.login}"><a href="/likeablePerson/like"><i
+                        <li th:if="${@rq.login}" th:unless="${@rq.member.hasConnectedInstaMember}">
+                            <a href="/usr/instaMember/connect">
+                                <i class="fa-brands fa-instagram"></i>
+                                인스타 아이디 입력
+                            </a>
+                        </li>
+                        <li th:if="${@rq.login}"><a href="/usr/likeablePerson/add"><i
                                 class="fa-solid fa-heart-circle-plus"></i> 호감표시</a></li>
-                        <li th:if="${@rq.login}"><a href="/likeablePerson/list"><i class="fa-solid fa-list-ol"></i> 호감목록</a>
+                        <li th:if="${@rq.login}"><a href="/usr/likeablePerson/list"><i class="fa-solid fa-list-ol"></i> 호감목록</a>
                         </li>
                     </ul>
                 </div>
