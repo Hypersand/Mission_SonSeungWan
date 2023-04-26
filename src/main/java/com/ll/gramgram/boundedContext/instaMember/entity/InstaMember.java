@@ -22,7 +22,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @ToString
 @Entity
 @Getter
-public class InstaMember extends InstaMemberSnapshot {
+public class InstaMember extends InstaMemberBase {
     @Column(unique = true)
     private String username;
     @Setter
@@ -40,10 +40,6 @@ public class InstaMember extends InstaMemberSnapshot {
     @Builder.Default // @Builder 가 있으면 ` = new ArrayList<>();` 가 작동하지 않는다. 그래서 이걸 붙여야 한다.
     private List<LikeablePerson> toLikeablePeople = new ArrayList<>();
 
-    @OneToMany(mappedBy = "instaMember", cascade = {CascadeType.ALL})
-    @OrderBy("id desc") // 정렬
-    @Builder.Default
-    private List<InstaMemberSnapshot> instaMemberSnapshots = new ArrayList<>();
 
     public void addFromLikeablePerson(LikeablePerson likeablePerson) {
         fromLikeablePeople.add(0, likeablePerson); // @OrderBy("id desc") 때문에 앞으로 넣는다.
@@ -86,37 +82,24 @@ public class InstaMember extends InstaMemberSnapshot {
         };
     }
 
-    public boolean updateGender(String gender) {
-        String oldGender = this.gender;
-
-        if (gender.equals(oldGender)) {
-            return false;
-        }
-
-        List<LikeablePerson> fromLikeablePersonList = getFromLikeablePeople();
-
-        for (LikeablePerson likeablePerson : fromLikeablePersonList) {
-            likeablePerson.getToInstaMember().decreaseLikesCount(oldGender, likeablePerson.getAttractiveTypeCode());
-            likeablePerson.getToInstaMember().increaseLikesCount(gender, likeablePerson.getAttractiveTypeCode());
-        }
-
+    public void updateGender(String gender) {
         this.gender = gender;
-
-        return true;
     }
 
-    public void saveSnapshot() {
-        InstaMemberSnapshot instaMemberSnapshot = InstaMemberSnapshot.builder()
-                .instaMember(this)
+    public InstaMemberSnapshot snapshot(String eventTypeCode) {
+        return InstaMemberSnapshot
+                .builder()
+                .eventTypeCode(eventTypeCode)
                 .username(username)
-                .likesCountByGenderWomanAndAttractiveTypeCode1(likesCountByGenderWomanAndAttractiveTypeCode1)
-                .likesCountByGenderWomanAndAttractiveTypeCode2(likesCountByGenderWomanAndAttractiveTypeCode2)
-                .likesCountByGenderWomanAndAttractiveTypeCode3(likesCountByGenderWomanAndAttractiveTypeCode3)
+                .instaMember(this)
+                .gender(gender)
                 .likesCountByGenderManAndAttractiveTypeCode1(likesCountByGenderManAndAttractiveTypeCode1)
                 .likesCountByGenderManAndAttractiveTypeCode2(likesCountByGenderManAndAttractiveTypeCode2)
                 .likesCountByGenderManAndAttractiveTypeCode3(likesCountByGenderManAndAttractiveTypeCode3)
+                .likesCountByGenderWomanAndAttractiveTypeCode1(likesCountByGenderWomanAndAttractiveTypeCode1)
+                .likesCountByGenderWomanAndAttractiveTypeCode2(likesCountByGenderWomanAndAttractiveTypeCode2)
+                .likesCountByGenderWomanAndAttractiveTypeCode3(likesCountByGenderWomanAndAttractiveTypeCode3)
                 .build();
 
-        instaMemberSnapshots.add(instaMemberSnapshot);
     }
 }
