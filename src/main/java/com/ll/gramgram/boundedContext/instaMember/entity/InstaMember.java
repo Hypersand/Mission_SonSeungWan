@@ -119,4 +119,23 @@ public class InstaMember {
             default -> "남성";
         };
     }
+
+    public boolean updateGender(String gender) {
+        String oldGender = this.gender;
+
+        if (gender.equals(oldGender)) {
+            return false;
+        }
+
+        List<LikeablePerson> fromLikeablePersonList = getFromLikeablePeople();
+
+        for (LikeablePerson likeablePerson : fromLikeablePersonList) {
+            likeablePerson.getToInstaMember().decreaseLikesCount(oldGender, likeablePerson.getAttractiveTypeCode());
+            likeablePerson.getToInstaMember().increaseLikesCount(gender, likeablePerson.getAttractiveTypeCode());
+        }
+
+        this.gender = gender;
+
+        return true;
+    }
 }
