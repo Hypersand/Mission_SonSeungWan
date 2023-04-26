@@ -1,6 +1,9 @@
 package com.ll.gramgram.boundedContext.likeablePerson.service;
 
 import com.ll.gramgram.base.appConfig.AppConfig;
+import com.ll.gramgram.base.event.EventAfterLike;
+import com.ll.gramgram.base.event.EventAfterModifyAttractiveType;
+import com.ll.gramgram.base.event.EventBeforeCancelLike;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
@@ -8,9 +11,12 @@ import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,6 +27,7 @@ import java.util.Optional;
 public class LikeablePersonService {
     private final LikeablePersonRepository likeablePersonRepository;
     private final InstaMemberService instaMemberService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public RsData<LikeablePerson> like(Member member, String username, int attractiveTypeCode) {
@@ -38,19 +45,11 @@ public class LikeablePersonService {
         LikeablePerson likeablePerson = getLikeablePerson(fromInstaMember, toInstaMember);
 
         if (!isRegisteredToInstaMember(likeablePerson)) {
-
-            if (canModify(likeablePerson, attractiveTypeCode)) {
-                String oldAttractiveType = likeablePerson.getAttractiveTypeDisplayName();
-                likeablePerson.update(attractiveTypeCode);
-                String newAttractiveType = likeablePerson.getAttractiveTypeDisplayName();
-                return RsData.of("S-2", username + "님에 대한 호감사유를 " + oldAttractiveType + "에서 " + newAttractiveType + "으로 변경합니다.");
-            }
-
             return RsData.of("F-5", username + "는 이미 호감표시를 등록한 인스타 유저입니다.");
         }
 
         if (!canRegisterToInstaMember(fromInstaMember)) {
-            return RsData.of("F-6", AppConfig.getLikeablePersonFromMax()+"명 이상의 호감상대를 등록 할 수 없습니다.");
+            return RsData.of("F-6", AppConfig.getLikeablePersonFromMax() + "명 이상의 호감상대를 등록 할 수 없습니다.");
         }
 
         likeablePerson = LikeablePerson
@@ -69,7 +68,7 @@ public class LikeablePersonService {
 
         // 너를 좋아하는 호감표시 생겼어.
         toInstaMember.addToLikeablePerson(likeablePerson);
-        toInstaMember.increaseLikesCount(fromInstaMember.getGender(), attractiveTypeCode);
+        publisher.publishEvent(new EventAfterLike(this, likeablePerson));
 
         return RsData.of("S-1", "입력하신 인스타유저(%s)를 호감상대로 등록되었습니다.".formatted(username), likeablePerson);
     }
@@ -88,6 +87,18 @@ public class LikeablePersonService {
 
 
     public RsData<LikeablePerson> canDelete(LikeablePerson likeablePerson, Member member) {
+
+        long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
+        if (diff < 10800) {
+            diff = 10800 - diff;
+            long hour = diff / 3600;
+            diff %= 3600;
+            long min = diff / 60;
+            diff %= 60;
+            long sec = diff;
+
+            return RsData.of("F-5", "삭제하려면 " + hour + "시간 " + min + "분 " + sec + "초 남았습니다!");
+        }
 
         if (likeablePerson == null) {
             return RsData.of("F-3", "해당 항목은 존재하지 않는 데이터입니다.");
@@ -113,7 +124,7 @@ public class LikeablePersonService {
         likeablePerson.getFromInstaMember().removeFromLikeablePerson(likeablePerson);
 
         likeablePerson.getToInstaMember().removeToLikeablePerson(likeablePerson);
-        likeablePerson.getToInstaMember().decreaseLikesCount(likeablePerson.getFromInstaMember().getGender(), likeablePerson.getAttractiveTypeCode());
+        publisher.publishEvent(new EventBeforeCancelLike(this, likeablePerson));
 
         likeablePersonRepository.delete(likeablePerson);
 
@@ -138,13 +149,40 @@ public class LikeablePersonService {
             return canModifyRsData;
         }
 
-        likeablePerson.update(attractiveTypeCode);
+        RsData<LikeablePerson> modifyRsData = modifyAttractionTypeCode(likeablePerson, attractiveTypeCode);
 
-        return canModifyRsData;
+        return modifyRsData;
+    }
 
+    public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractiveTypeCode) {
+        int oldAttractiveTypeCode = likeablePerson.getAttractiveTypeCode();
+        String oldAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
+        String username = likeablePerson.getToInstaMemberUsername();
+        RsData rsData = likeablePerson.updateAttractionTypeCode(attractiveTypeCode);
+
+        if (rsData.isSuccess()) {
+            publisher.publishEvent(new EventAfterModifyAttractiveType(this, likeablePerson, oldAttractiveTypeCode, attractiveTypeCode));
+        }
+
+        String newAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
+
+        return RsData.of("S-3", "%s님에 대한 호감사유를 %s에서 %s(으)로 변경합니다.".formatted(username, oldAttractiveTypeDisplayName, newAttractiveTypeDisplayName), likeablePerson);
     }
 
     public RsData<LikeablePerson> canModifyLike(Member member, LikeablePerson likeablePerson) {
+
+        long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
+
+        if (diff < 10800) {
+            diff = 10800 - diff;
+            long hour = diff / 3600;
+            diff %= 3600;
+            long min = diff / 60;
+            diff %= 60;
+            long sec = diff;
+
+            return RsData.of("F-5", "수정하려면 " + hour + "시간 " + min + "분 " + sec + "초 남았습니다!");
+        }
 
         if (!member.hasConnectedInstaMember()) {
             return RsData.of("F-1", "먼저 본인의 인스타그램 아이디를 입력해주세요.");
@@ -164,7 +202,6 @@ public class LikeablePersonService {
     }
 
 
-
     public boolean isRegisteredToInstaMember(LikeablePerson likeablePerson) {
         return likeablePerson == null;
     }
@@ -175,19 +212,4 @@ public class LikeablePersonService {
 
         return size < likeablePersonFromMax;
     }
-
-    public boolean canModify(LikeablePerson likeablePerson, int attractiveTypeCode) {
-
-        if (likeablePerson == null) {
-            return false;
-        }
-
-        if (attractiveTypeCode == likeablePerson.getAttractiveTypeCode()) {
-            return false;
-        }
-
-        return true;
-    }
-
-
 }
