@@ -68,7 +68,7 @@
                     <ul tabindex="0"
                         class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                         <li th:if="${@rq.logout}"><a href="/usr/member/login"><i
-                                class="fa-solid fa-arrow-right-to-bracket"></i> 로그인</a>
+                                class="fa-solid fa-arrow-right-to-bracket"></i> 시작하기</a>
                         </li>
                         <li th:if="${@rq.logout}"><a href="/usr/member/join"><i class="fa-solid fa-user-plus"></i> 회원가입</a>
                         </li>
@@ -89,6 +89,8 @@
                                 class="fa-solid fa-heart-circle-plus"></i> 호감표시</a></li>
                         <li th:if="${@rq.login}"><a href="/usr/likeablePerson/list"><i class="fa-solid fa-list-ol"></i> 호감목록</a>
                         </li>
+                        <li><a href="/usr/home/about"><i class="fa-solid fa-heart"></i> 그램그램이란?</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -96,16 +98,16 @@
                 <a href="/" class="btn btn-ghost normal-case text-xl">gramgram</a>
             </div>
             <div class="navbar-end">
-                <button class="btn btn-ghost btn-circle">
+                <a href="/usr/noti/list" class="btn btn-ghost btn-circle">
                     <div class="indicator">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
-                        <span class="badge badge-xs badge-primary indicator-item"></span>
+                        <span th:if="${@rq.login}" class="badge badge-xs badge-primary indicator-item"></span>
                     </div>
-                </button>
+                </a>
             </div>
         </div>
     </header>
