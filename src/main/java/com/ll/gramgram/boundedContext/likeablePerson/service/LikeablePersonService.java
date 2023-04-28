@@ -89,15 +89,9 @@ public class LikeablePersonService {
     public RsData<LikeablePerson> canDelete(LikeablePerson likeablePerson, Member member) {
 
         long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
-        if (diff < 10800) {
-            diff = 10800 - diff;
-            long hour = diff / 3600;
-            diff %= 3600;
-            long min = diff / 60;
-            diff %= 60;
-            long sec = diff;
 
-            return RsData.of("F-5", "삭제하려면 " + hour + "시간 " + min + "분 " + sec + "초 남았습니다!");
+        if (!isCoolTimeOver(diff)) {
+            return remainCoolTimeRsData(diff);
         }
 
         if (likeablePerson == null) {
@@ -114,7 +108,6 @@ public class LikeablePersonService {
 
         return RsData.of("S-1", "삭제 가능합니다.");
     }
-
 
     @Transactional
     public RsData<LikeablePerson> delete(LikeablePerson likeablePerson) {
@@ -173,15 +166,8 @@ public class LikeablePersonService {
 
         long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
 
-        if (diff < 10800) {
-            diff = 10800 - diff;
-            long hour = diff / 3600;
-            diff %= 3600;
-            long min = diff / 60;
-            diff %= 60;
-            long sec = diff;
-
-            return RsData.of("F-5", "수정하려면 " + hour + "시간 " + min + "분 " + sec + "초 남았습니다!");
+        if (!isCoolTimeOver(diff)) {
+            return remainCoolTimeRsData(diff);
         }
 
         if (!member.hasConnectedInstaMember()) {
@@ -212,4 +198,27 @@ public class LikeablePersonService {
 
         return size < likeablePersonFromMax;
     }
+
+    private boolean isCoolTimeOver(long diff) {
+
+        Long coolTime = AppConfig.getLikeablePersonModifyCoolTime();
+
+        if (diff < coolTime) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private RsData<LikeablePerson> remainCoolTimeRsData(long diff) {
+        diff = 10800 - diff;
+        long hour = diff / 3600;
+        diff %= 3600;
+        long min = diff / 60;
+        diff %= 60;
+        long sec = diff;
+
+        return RsData.of("F-5", "변경하려면 " + hour + "시간 " + min + "분 " + sec + "초 남았습니다!");
+    }
+
 }
