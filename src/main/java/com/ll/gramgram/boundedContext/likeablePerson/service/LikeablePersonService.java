@@ -89,11 +89,11 @@ public class LikeablePersonService {
 
     public RsData<LikeablePerson> canDelete(LikeablePerson likeablePerson, Member member) {
 
-        long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
+//        long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
 
-        if (!isCoolTimeOver(diff)) {
-            return remainCoolTimeRsData(diff);
-        }
+//        if (!isCoolTimeOver(diff)) {
+//            return remainCoolTimeRsData(diff);
+//        }
 
         if (likeablePerson == null) {
             return RsData.of("F-3", "해당 항목은 존재하지 않는 데이터입니다.");
@@ -125,6 +125,7 @@ public class LikeablePersonService {
         return RsData.of("S-1", toInstaUsername + "님이 당신의 호감목록에서 제외됐습니다.");
     }
 
+    @Transactional
     public RsData<LikeablePerson> modifyAttractive(Member member, Long id, int attractiveTypeCode) {
         LikeablePerson likeablePerson = findById(id).orElse(null);
 
@@ -147,7 +148,6 @@ public class LikeablePersonService {
         return modifyRsData;
     }
 
-    @Transactional
     public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractiveTypeCode) {
         int oldAttractiveTypeCode = likeablePerson.getAttractiveTypeCode();
         String oldAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
@@ -165,11 +165,11 @@ public class LikeablePersonService {
 
     public RsData<LikeablePerson> canModifyLike(Member member, LikeablePerson likeablePerson) {
 
-        long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
+//        long diff = ChronoUnit.SECONDS.between(likeablePerson.getModifyDate(), LocalDateTime.now());
 
-        if (!isCoolTimeOver(diff)) {
-            return remainCoolTimeRsData(diff);
-        }
+//        if (!isCoolTimeOver(diff)) {
+//            return remainCoolTimeRsData(diff);
+//        }
 
         if (!member.hasConnectedInstaMember()) {
             return RsData.of("F-1", "먼저 본인의 인스타그램 아이디를 입력해주세요.");
@@ -200,26 +200,26 @@ public class LikeablePersonService {
         return size < likeablePersonFromMax;
     }
 
-    private boolean isCoolTimeOver(long diff) {
-
-        Long coolTime = AppConfig.getLikeablePersonModifyCoolTime();
-
-        if (diff < coolTime) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private RsData<LikeablePerson> remainCoolTimeRsData(long diff) {
-        diff = 10800 - diff;
-        long hour = diff / 3600;
-        diff %= 3600;
-        long min = diff / 60;
-        diff %= 60;
-        long sec = diff;
-
-        return RsData.of("F-5", "변경하려면 " + hour + "시간 " + min + "분 " + sec + "초 남았습니다!");
-    }
+//    private boolean isCoolTimeOver(long diff) {
+//
+//        Long coolTime = AppConfig.getLikeablePersonModifyCoolTime();
+//
+//        if (diff < coolTime) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
+//
+//    private RsData<LikeablePerson> remainCoolTimeRsData(long diff) {
+//        diff = 10800 - diff;
+//        long hour = diff / 3600;
+//        diff %= 3600;
+//        long min = diff / 60;
+//        diff %= 60;
+//        long sec = diff;
+//
+//        return RsData.of("F-5", "변경하려면 " + hour + "시간 " + min + "분 " + sec + "초 남았습니다!");
+//    }
 
 }
