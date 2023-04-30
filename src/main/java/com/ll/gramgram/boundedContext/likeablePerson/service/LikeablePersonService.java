@@ -125,7 +125,6 @@ public class LikeablePersonService {
         return RsData.of("S-1", toInstaUsername + "님이 당신의 호감목록에서 제외됐습니다.");
     }
 
-    @Transactional
     public RsData<LikeablePerson> modifyAttractive(Member member, Long id, int attractiveTypeCode) {
         LikeablePerson likeablePerson = findById(id).orElse(null);
 
@@ -148,6 +147,7 @@ public class LikeablePersonService {
         return modifyRsData;
     }
 
+    @Transactional
     public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractiveTypeCode) {
         int oldAttractiveTypeCode = likeablePerson.getAttractiveTypeCode();
         String oldAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
