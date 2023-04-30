@@ -73,4 +73,13 @@ public class LikeablePerson {
         return RsData.of("S-1", "성공");
     }
 
+    public boolean isModifyUnlocked() {
+        return modifyUnlockDate.isBefore(LocalDateTime.now());
+    }
+
+    // 초 단위에서 올림 해주세요.
+    public String getModifyUnlockDateRemainStrHuman() {
+        return "2시간 16분";
+    }
+
 }
