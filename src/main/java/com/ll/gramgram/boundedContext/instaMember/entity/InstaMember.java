@@ -6,27 +6,26 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Entity
 @Getter
+@NoArgsConstructor
+@SuperBuilder
+@ToString(callSuper = true)
 public class InstaMember extends InstaMemberBase {
+    @Setter
     @Column(unique = true)
     private String username;
+
     @Setter
-    private String gender;
+    @Column(unique = true)
+    private String oauthId;
+
+    @Setter
+    private String accessToken;
 
     @OneToMany(mappedBy = "fromInstaMember", cascade = {CascadeType.ALL})
     @OrderBy("id desc") // 정렬
@@ -36,17 +35,15 @@ public class InstaMember extends InstaMemberBase {
 
     @OneToMany(mappedBy = "toInstaMember", cascade = {CascadeType.ALL})
     @OrderBy("id desc") // 정렬
-    @LazyCollection(LazyCollectionOption.EXTRA)
     @Builder.Default // @Builder 가 있으면 ` = new ArrayList<>();` 가 작동하지 않는다. 그래서 이걸 붙여야 한다.
     private List<LikeablePerson> toLikeablePeople = new ArrayList<>();
 
-
     public void addFromLikeablePerson(LikeablePerson likeablePerson) {
-        fromLikeablePeople.add(0, likeablePerson); // @OrderBy("id desc") 때문에 앞으로 넣는다.
+        fromLikeablePeople.add(0, likeablePerson);
     }
 
     public void addToLikeablePerson(LikeablePerson likeablePerson) {
-        toLikeablePeople.add(0, likeablePerson); // @OrderBy("id desc") 때문에 앞으로 넣는다.
+        toLikeablePeople.add(0, likeablePerson);
     }
 
     public void removeFromLikeablePerson(LikeablePerson likeablePerson) {
@@ -55,6 +52,20 @@ public class InstaMember extends InstaMemberBase {
 
     public void removeToLikeablePerson(LikeablePerson likeablePerson) {
         toLikeablePeople.removeIf(e -> e.equals(likeablePerson));
+    }
+
+    public String getGenderDisplayName() {
+        return switch (gender) {
+            case "W" -> "여성";
+            default -> "남성";
+        };
+    }
+
+    public String getGenderDisplayNameWithIcon() {
+        return switch (gender) {
+            case "W" -> "<i class=\"fa-solid fa-person-dress\"></i>";
+            default -> "<i class=\"fa-solid fa-person\"></i>";
+        } + "&nbsp;" + getGenderDisplayName();
     }
 
     public void increaseLikesCount(String gender, int attractiveTypeCode) {
@@ -75,13 +86,6 @@ public class InstaMember extends InstaMemberBase {
         if (gender.equals("M") && attractiveTypeCode == 3) likesCountByGenderManAndAttractiveTypeCode3--;
     }
 
-    public String getGenderDisplayName() {
-        return switch (gender) {
-            case "W" -> "여성";
-            default -> "남성";
-        };
-    }
-
     public void updateGender(String gender) {
         this.gender = gender;
     }
@@ -100,6 +104,5 @@ public class InstaMember extends InstaMemberBase {
                 .likesCountByGenderWomanAndAttractiveTypeCode2(likesCountByGenderWomanAndAttractiveTypeCode2)
                 .likesCountByGenderWomanAndAttractiveTypeCode3(likesCountByGenderWomanAndAttractiveTypeCode3)
                 .build();
-
     }
 }

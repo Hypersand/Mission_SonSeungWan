@@ -19,8 +19,8 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class InstaMemberService {
     private final InstaMemberRepository instaMemberRepository;
-    private final InstaMemberSnapshotRepository instaMemberSnapshotRepository;
     private final MemberService memberService;
+    private final InstaMemberSnapshotRepository instaMemberSnapshotRepository;
 
     public Optional<InstaMember> findByUsername(String username) {
         return instaMemberRepository.findByUsername(username);
@@ -64,9 +64,6 @@ public class InstaMemberService {
     public RsData<InstaMember> findByUsernameOrCreate(String username) {
         Optional<InstaMember> opInstaMember = findByUsername(username);
 
-        if (opInstaMember.isPresent()) return RsData.of("S-2", "인스타계정이 등록되었습니다.", opInstaMember.get());
-
-        // 아직 성별을 알 수 없으니, 언노운의 의미로 U 넣음
         return opInstaMember
                 .map(instaMember -> RsData.of("S-2", "인스타계정이 등록되었습니다.", instaMember))
                 .orElseGet(() -> create(username, "U"));
@@ -81,7 +78,6 @@ public class InstaMemberService {
             InstaMember instaMember = opInstaMember.get();
             instaMember.updateGender(gender); // 성별세팅
             instaMemberRepository.save(instaMember); // 저장
-
 
             // 기존 인스타회원이랑 연결
             return RsData.of("S-2", "인스타계정이 등록되었습니다.", instaMember);
@@ -143,5 +139,42 @@ public class InstaMemberService {
 
                     saveSnapshot(snapshot);
                 });
+    }
+
+    public RsData<InstaMember> connect(Member actor, String gender, String oauthId, String username, String accessToken) {
+        Optional<InstaMember> opInstaMember = instaMemberRepository.findByOauthId(oauthId);
+
+        if (opInstaMember.isPresent()) {
+            InstaMember instaMember = opInstaMember.get();
+            instaMember.setUsername(username);
+            instaMember.setAccessToken(accessToken);
+            instaMember.setGender(gender);
+            instaMemberRepository.save(instaMember);
+
+            actor.setInstaMember(instaMember);
+
+            return RsData.of("S-3", "인스타계정이 연결되었습니다.", instaMember);
+        }
+
+        opInstaMember = findByUsername(username);
+
+        if (opInstaMember.isPresent()) {
+            InstaMember instaMember = opInstaMember.get();
+            instaMember.setOauthId(oauthId);
+            instaMember.setAccessToken(accessToken);
+            instaMember.setGender(gender);
+            instaMemberRepository.save(instaMember);
+
+            actor.setInstaMember(instaMember);
+
+            return RsData.of("S-4", "인스타계정이 연결되었습니다.", instaMember);
+        }
+
+        InstaMember instaMember = connect(actor, username, gender).getData();
+
+        instaMember.setOauthId(oauthId);
+        instaMember.setAccessToken(accessToken);
+
+        return RsData.of("S-5", "인스타계정이 연결되었습니다.", instaMember);
     }
 }

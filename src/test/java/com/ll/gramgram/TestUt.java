@@ -1,4 +1,4 @@
-package com.ll.gramgram.boundedContext;
+package com.ll.gramgram;
 
 import com.ll.gramgram.standard.util.Ut;
 

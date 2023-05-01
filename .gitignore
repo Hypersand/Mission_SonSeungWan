@@ -41,3 +41,6 @@ out/
 .vscode/
 application.yml
 NotProd.java
+keystore.p12
+application-secret.yml
+application-secret.yml.default
