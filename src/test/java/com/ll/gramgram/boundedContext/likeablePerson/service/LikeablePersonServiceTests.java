@@ -1,8 +1,8 @@
 package com.ll.gramgram.boundedContext.likeablePerson.service;
 
 
+import com.ll.gramgram.TestUt;
 import com.ll.gramgram.base.appConfig.AppConfig;
-import com.ll.gramgram.boundedContext.TestUt;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class LikeablePersonServiceTest {
+public class LikeablePersonServiceTests {
     @Autowired
     private MemberService memberService;
     @Autowired
@@ -208,13 +208,13 @@ public class LikeablePersonServiceTest {
         assertThat(likeablePerson.getId()).isEqualTo(2);
     }
 
-//    @Test
-//    @DisplayName("테스트 5")
-//    void t005() throws Exception {
-//        LikeablePerson likeablePerson = likeablePersonRepository.findQslByFromInstaMemberIdAndToInstaMember_username(2L, "insta_user4").orElse(null);
-//
-//        assertThat(likeablePerson.getId()).isEqualTo(1L);
-//    }
+    @Test
+    @DisplayName("테스트 5")
+    void t005() throws Exception {
+        LikeablePerson likeablePerson = likeablePersonRepository.findQslByFromInstaMemberIdAndToInstaMember_username(2L, "insta_user4").orElse(null);
+
+        assertThat(likeablePerson.getId()).isEqualTo(1L);
+    }
 
     @Test
     @DisplayName("설정파일에서 호감표시에 대한 수정쿨타임 가져오기")
@@ -256,7 +256,7 @@ public class LikeablePersonServiceTest {
         TestUt.setFieldValue(likeablePersonToBts, "modifyUnlockDate", LocalDateTime.now().minusSeconds(-1));
 
         // 수정을 하면 쿨타임이 갱신된다.
-        likeablePersonService.modifyAttractionTypeCode(likeablePersonToBts, 1);
+        likeablePersonService.modifyAttractive(memberUser3, likeablePersonToBts, 1);
 
         // 갱신 되었는지 확인
         assertThat(

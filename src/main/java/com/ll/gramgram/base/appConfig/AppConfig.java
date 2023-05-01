@@ -1,6 +1,5 @@
 package com.ll.gramgram.base.appConfig;
 
-
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -10,18 +9,18 @@ import java.time.LocalDateTime;
 @Configuration
 public class AppConfig {
     @Getter
-    private static Long likeablePersonFromMax;
-
-    @Getter
-    private static Long likeablePersonModifyCoolTime;
+    private static long likeablePersonFromMax;
 
     @Value("${custom.likeablePerson.from.max}")
     public void setLikeablePersonFromMax(long likeablePersonFromMax) {
         AppConfig.likeablePersonFromMax = likeablePersonFromMax;
     }
 
+    @Getter
+    private static long likeablePersonModifyCoolTime;
+
     @Value("${custom.likeablePerson.modifyCoolTime}")
-    public void setLikeablePersonModifyCoolTime(Long likeablePersonModifyCoolTime) {
+    public void setLikeablePersonModifyCoolTime(long likeablePersonModifyCoolTime) {
         AppConfig.likeablePersonModifyCoolTime = likeablePersonModifyCoolTime;
     }
 

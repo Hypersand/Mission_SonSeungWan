@@ -1,6 +1,5 @@
 package com.ll.gramgram.standard.util;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,7 +11,6 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class Ut {
-
     public static class reflection {
         public static boolean setFieldValue(Object o, String fieldName, Object value) {
             Field field = null;
@@ -95,7 +93,6 @@ public class Ut {
             return Base64.getEncoder().encodeToString(hashBytes);
         }
     }
-
 
     public static class url {
         public static String encode(String str) {
