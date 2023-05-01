@@ -24,9 +24,9 @@ public class LikeablePersonController {
     private final Rq rq;
     private final LikeablePersonService likeablePersonService;
 
-    @GetMapping("/add")
     @PreAuthorize("isAuthenticated()")
-    public String showAdd() {
+    @GetMapping("/like")
+    public String showLike() {
         return "usr/likeablePerson/like";
     }
 
@@ -36,23 +36,26 @@ public class LikeablePersonController {
         @NotBlank
         @Size(min = 3, max = 30)
         private final String username;
+        @NotNull
+        @Min(1)
+        @Max(3)
         private final int attractiveTypeCode;
     }
 
-    @PostMapping("/add")
     @PreAuthorize("isAuthenticated()")
-    public String add(@Valid LikeForm addForm) {
-        RsData<LikeablePerson> createRsData = likeablePersonService.like(rq.getMember(), addForm.getUsername(), addForm.getAttractiveTypeCode());
+    @PostMapping("/like")
+    public String like(@Valid LikeForm likeForm) {
+        RsData<LikeablePerson> rsData = likeablePersonService.like(rq.getMember(), likeForm.getUsername(), likeForm.getAttractiveTypeCode());
 
-        if (createRsData.isFail()) {
-            return rq.historyBack(createRsData);
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData);
         }
 
-        return rq.redirectWithMsg("/usr/likeablePerson/list", createRsData);
+        return rq.redirectWithMsg("/usr/likeablePerson/list", rsData);
     }
 
-    @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/list")
     public String showList(Model model) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
@@ -66,22 +69,18 @@ public class LikeablePersonController {
         return "usr/likeablePerson/list";
     }
 
-    @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String delete(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public String cancel(@PathVariable Long id) {
         LikeablePerson likeablePerson = likeablePersonService.findById(id).orElse(null);
 
-        RsData<LikeablePerson> canDeleteRsData = likeablePersonService.canDelete(likeablePerson, rq.getMember());
+        RsData canDeleteRsData = likeablePersonService.canCancel(rq.getMember(), likeablePerson);
 
-        if (canDeleteRsData.isFail()) {
-            return rq.historyBack(canDeleteRsData);
-        }
+        if (canDeleteRsData.isFail()) return rq.historyBack(canDeleteRsData);
 
-        RsData<LikeablePerson> deleteRsData = likeablePersonService.delete(likeablePerson);
+        RsData deleteRsData = likeablePersonService.cancel(likeablePerson);
 
-        if (deleteRsData.isFail()) {
-            return rq.historyBack(deleteRsData);
-        }
+        if (deleteRsData.isFail()) return rq.historyBack(deleteRsData);
 
         return rq.redirectWithMsg("/usr/likeablePerson/list", deleteRsData);
     }
@@ -89,29 +88,15 @@ public class LikeablePersonController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String showModify(@PathVariable Long id, Model model) {
-        LikeablePerson likeablePerson = likeablePersonService.findById(id).orElse(null);
+        LikeablePerson likeablePerson = likeablePersonService.findById(id).orElseThrow();
 
-        RsData<LikeablePerson> canModifyRsData = likeablePersonService.canModifyLike(rq.getMember(), likeablePerson);
+        RsData canModifyRsData = likeablePersonService.canModifyLike(rq.getMember(), likeablePerson);
 
-        if (canModifyRsData.isFail()) {
-            return rq.historyBack(canModifyRsData);
-        }
+        if (canModifyRsData.isFail()) return rq.historyBack(canModifyRsData);
 
         model.addAttribute("likeablePerson", likeablePerson);
 
-        return "/usr/likeablePerson/modify";
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/modify/{id}")
-    public String modify(@PathVariable Long id, @Valid ModifyForm modifyForm) {
-        RsData<LikeablePerson> modifyRsData = likeablePersonService.modifyAttractive(rq.getMember(), id, modifyForm.getAttractiveTypeCode());
-
-        if (modifyRsData.isFail()) {
-            return rq.historyBack(modifyRsData);
-        }
-
-        return rq.redirectWithMsg("/usr/likeablePerson/list", modifyRsData);
+        return "usr/likeablePerson/modify";
     }
 
     @AllArgsConstructor
@@ -121,5 +106,25 @@ public class LikeablePersonController {
         @Min(1)
         @Max(3)
         private final int attractiveTypeCode;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{id}")
+    public String modify(@PathVariable Long id, @Valid ModifyForm modifyForm) {
+        RsData<LikeablePerson> rsData = likeablePersonService.modifyAttractive(rq.getMember(), id, modifyForm.getAttractiveTypeCode());
+
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData);
+        }
+
+        return rq.redirectWithMsg("/usr/likeablePerson/list", rsData);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/toList")
+    @ResponseBody
+    public String showToList(Model model) {
+        //TODO : showToList 구현해야 함
+        return "usr/likeablePerson/toList 구현해야 함";
     }
 }
