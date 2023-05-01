@@ -177,8 +177,20 @@ public class LikeablePersonService {
 
         String oldAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
         String username = likeablePerson.getToInstaMember().getUsername();
+        int oldAttractiveTypeCode = likeablePerson.getAttractiveTypeCode();
 
         modifyAttractionTypeCode(likeablePerson, attractiveTypeCode);
+
+        Notification notification = Notification
+                .builder()
+                .toInstaMember(likeablePerson.getToInstaMember())
+                .fromInstaMember(likeablePerson.getFromInstaMember())
+                .oldAttractiveTypeCode(oldAttractiveTypeCode)
+                .newAttractiveTypeCode(attractiveTypeCode)
+                .typeCode("ModifyAttractiveType")
+                .build();
+
+        notificationRepository.save(notification);
 
         String newAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
 
