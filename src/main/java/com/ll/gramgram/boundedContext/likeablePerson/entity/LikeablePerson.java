@@ -51,9 +51,16 @@ public class LikeablePerson extends BaseEntity {
         remainingCoolTime %= 3600;
         long min = remainingCoolTime / 60;
         remainingCoolTime %= 60;
+
         if (remainingCoolTime > 0) {
             min += 1;
         }
+
+        if (min == 60) {
+            hour += 1;
+            min = 0;
+        }
+
         return hour + "시간 " + min + "분 ";
     }
 
