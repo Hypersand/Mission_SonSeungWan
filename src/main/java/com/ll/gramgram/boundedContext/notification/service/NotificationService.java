@@ -29,7 +29,7 @@ public class NotificationService {
         List<Notification> notifications = findByToInstaMemberAndReadDateIsNull(toInstaMember);
 
         for (Notification notification : notifications) {
-            notification.renewReadDate();
+            notification.markAsRead();
         }
     }
 

@@ -55,7 +55,7 @@ public class Notification extends BaseEntity {
         return "여자";
     }
 
-    public void renewReadDate() {
+    public void markAsRead() {
         this.readDate = LocalDateTime.now();
     }
 }
