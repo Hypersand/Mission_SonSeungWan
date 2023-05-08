@@ -41,32 +41,13 @@ public class LikeablePerson extends BaseEntity {
 
     // 초 단위에서 올림 해주세요.
     public String getModifyUnlockDateRemainStrHuman() {
-        return convertCoolTimeToHoursAndMinutes();
-    }
-
-    private String convertCoolTimeToHoursAndMinutes() {
         long remainingCoolTime = getRemainingCoolTime();
 
-        long hour = remainingCoolTime / 3600;
-        remainingCoolTime %= 3600;
-        long min = remainingCoolTime / 60;
-        remainingCoolTime %= 60;
-
-        if (remainingCoolTime > 0) {
-            min += 1;
-        }
-
-        if (min == 60) {
-            hour += 1;
-            min = 0;
-        }
-
-        return hour + "시간 " + min + "분 ";
+        return Ut.time.convertCoolTimeToHoursAndMinutes(remainingCoolTime);
     }
 
     private long getRemainingCoolTime() {
         long remainingCoolTime = ChronoUnit.SECONDS.between(LocalDateTime.now(), this.getModifyUnlockDate());
-
         return remainingCoolTime;
     }
 

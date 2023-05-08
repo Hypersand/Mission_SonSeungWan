@@ -1,5 +1,7 @@
 package com.ll.gramgram.standard.util;
 
+import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,6 +13,27 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class Ut {
+    public static class time {
+        public static String convertCoolTimeToHoursAndMinutes(long remainingCoolTime) {
+
+            long hour = remainingCoolTime / 3600;
+            remainingCoolTime %= 3600;
+            long min = remainingCoolTime / 60;
+            remainingCoolTime %= 60;
+
+            if (remainingCoolTime > 0) {
+                min += 1;
+            }
+
+            if (min == 60) {
+                hour += 1;
+                min = 0;
+            }
+
+            return hour + "시간 " + min + "분 ";
+        }
+    }
+
     public static class reflection {
         public static boolean setFieldValue(Object o, String fieldName, Object value) {
             Field field = null;
