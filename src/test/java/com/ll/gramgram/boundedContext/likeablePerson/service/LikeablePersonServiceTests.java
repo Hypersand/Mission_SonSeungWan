@@ -93,28 +93,13 @@ public class LikeablePersonServiceTests {
         assertThat(instaMemberInstaUser3.getUsername()).isEqualTo("insta_user3");
 
         // 내가 새로 호감을 표시하려는 사람의 인스타 아이디
-        String usernameToLike = "insta_user4";
+        String usernameToLike = "ss_wany_";
 
         // v1
         LikeablePerson likeablePersonIndex0 = instaMemberInstaUser3.getFromLikeablePeople().get(0);
-        LikeablePerson likeablePersonIndex1 = instaMemberInstaUser3.getFromLikeablePeople().get(1);
 
         if (usernameToLike.equals(likeablePersonIndex0.getToInstaMember().getUsername())) {
             System.out.println("v1 : 이미 나(인스타아이디 : insta_user3)는 insta_user4에게 호감을 표시 했구나.");
-        }
-
-        if (usernameToLike.equals(likeablePersonIndex1.getToInstaMember().getUsername())) {
-            System.out.println("v1 : 이미 나(인스타아이디 : insta_user3)는 insta_user4에게 호감을 표시 했구나.");
-        }
-
-        // v2
-        for (LikeablePerson fromLikeablePerson : instaMemberInstaUser3.getFromLikeablePeople()) {
-            String toInstaMemberUsername = fromLikeablePerson.getToInstaMember().getUsername();
-
-            if (usernameToLike.equals(toInstaMemberUsername)) {
-                System.out.println("v2 : 이미 나(인스타아이디 : insta_user3)는 insta_user4에게 호감을 표시 했구나.");
-                break;
-            }
         }
 
         // v3
@@ -183,9 +168,9 @@ public class LikeablePersonServiceTests {
         ON t1_0.id=l1_0.to_insta_member_id
         WHERE t1_0.username = "insta_user100";
         */
-        List<LikeablePerson> likeablePeople2 = likeablePersonRepository.findByToInstaMember_username("insta_user100");
+        List<LikeablePerson> likeablePeople2 = likeablePersonRepository.findByToInstaMember_username("ss_wany_");
 
-        assertThat(likeablePeople2.get(0).getId()).isEqualTo(2);
+        assertThat(likeablePeople2.get(0).getId()).isEqualTo(1);
 
         // 좋아하는 사람이 2번 인스타 회원이고, 좋아하는 대상의 인스타아이디가 "insta_user100" 인 `좋아요`
         /*
@@ -203,7 +188,7 @@ public class LikeablePersonServiceTests {
         WHERE l1_0.from_insta_member_id = 2
         AND t1_0.username = "insta_user100";
         */
-        LikeablePerson likeablePerson = likeablePersonRepository.findByFromInstaMemberIdAndToInstaMember_username(2L, "insta_user100");
+        LikeablePerson likeablePerson = likeablePersonRepository.findByFromInstaMemberIdAndToInstaMember_username(2L, "ss_wany_");
 
         assertThat(likeablePerson.getId()).isEqualTo(2);
     }
@@ -211,9 +196,9 @@ public class LikeablePersonServiceTests {
     @Test
     @DisplayName("테스트 5")
     void t005() throws Exception {
-        LikeablePerson likeablePerson = likeablePersonRepository.findQslByFromInstaMemberIdAndToInstaMember_username(2L, "insta_user4").orElse(null);
+        LikeablePerson likeablePerson = likeablePersonRepository.findQslByFromInstaMemberIdAndToInstaMember_username(2L, "ss_wany_").orElse(null);
 
-        assertThat(likeablePerson.getId()).isEqualTo(1L);
+        assertThat(likeablePerson.getId()).isEqualTo(2L);
     }
 
     @Test
@@ -253,14 +238,12 @@ public class LikeablePersonServiceTests {
         // 호감표시를 생성하면 쿨타임이 지정되기 때문에, 그래서 바로 수정이 안된다.
         // 그래서 강제로 쿨타임이 지난것으로 만든다.
         // 테스트를 위해서 억지로 값을 넣는다.
-        TestUt.setFieldValue(likeablePersonToBts, "modifyUnlockDate", LocalDateTime.now().minusSeconds(-1));
+        TestUt.setFieldValue(likeablePersonToBts, "modifyUnlockDate", LocalDateTime.now().minusSeconds(1));
 
         // 수정을 하면 쿨타임이 갱신된다.
         likeablePersonService.modifyAttractive(memberUser3, likeablePersonToBts, 1);
 
         // 갱신 되었는지 확인
-        assertThat(
-                likeablePersonToBts.getModifyUnlockDate().isAfter(coolTime)
-        ).isTrue();
+        assertThat(likeablePersonToBts.getModifyUnlockDate().isAfter(coolTime)).isTrue();
     }
 }
