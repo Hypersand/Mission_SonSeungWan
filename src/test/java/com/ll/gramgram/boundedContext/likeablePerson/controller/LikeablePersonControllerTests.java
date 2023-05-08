@@ -199,13 +199,7 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().methodName("showList"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().string(containsString("""
-                        data-test="toInstaMember_username=insta_user4"
-                        """.stripIndent().trim())))
-                .andExpect(content().string(containsString("""
-                        data-test="toInstaMember_attractiveTypeDisplayName=외모"
-                        """.stripIndent().trim())))
-                .andExpect(content().string(containsString("""
-                        data-test="toInstaMember_username=insta_user100"
+                        data-test="toInstaMember_username=ss_wany_"
                         """.stripIndent().trim())))
                 .andExpect(content().string(containsString("""
                         data-test="toInstaMember_attractiveTypeDisplayName=성격"
@@ -219,7 +213,7 @@ public class LikeablePersonControllerTests {
         // WHEN
         ResultActions resultActions = mvc
                 .perform(
-                        delete("/usr/likeablePerson/1")
+                        delete("/usr/likeablePerson/2")
                                 .with(csrf())
                 )
                 .andDo(print());
@@ -232,7 +226,7 @@ public class LikeablePersonControllerTests {
                 .andExpect(redirectedUrlPattern("/usr/likeablePerson/list**"))
         ;
 
-        assertThat(likeablePersonService.findById(1L).isPresent()).isEqualTo(false);
+        assertThat(likeablePersonService.findById(2L).isPresent()).isEqualTo(false);
     }
 
     @Test
@@ -262,7 +256,7 @@ public class LikeablePersonControllerTests {
         // WHEN
         ResultActions resultActions = mvc
                 .perform(
-                        delete("/usr/likeablePerson/1")
+                        delete("/usr/likeablePerson/2")
                                 .with(csrf())
                 )
                 .andDo(print());
@@ -274,7 +268,7 @@ public class LikeablePersonControllerTests {
                 .andExpect(status().is4xxClientError())
         ;
 
-        assertThat(likeablePersonService.findById(1L).isPresent()).isEqualTo(true);
+        assertThat(likeablePersonService.findById(2L).isPresent()).isEqualTo(true);
     }
 
     @Test
@@ -325,8 +319,8 @@ public class LikeablePersonControllerTests {
         ResultActions resultActions = mvc
                 .perform(post("/usr/likeablePerson/like")
                         .with(csrf()) // CSRF 키 생성
-                        .param("username", "insta_user4")
-                        .param("attractiveTypeCode", "1")
+                        .param("username", "ss_wany_")
+                        .param("attractiveTypeCode", "2")
                 )
                 .andDo(print());
 
@@ -390,5 +384,27 @@ public class LikeablePersonControllerTests {
                 .orElse(-1);
 
         assertThat(newAttractiveTypeCode).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("호감취소는 쿨타임이 지나야 가능하다.")
+    @WithUserDetails("user3")
+    void t016() throws Exception {
+        // WHEN
+        ResultActions resultActions = mvc
+                .perform(
+                        delete("/usr/likeablePerson/3")
+                                .with(csrf())
+                )
+                .andDo(print());
+
+        // THEN
+        resultActions
+                .andExpect(handler().handlerType(LikeablePersonController.class))
+                .andExpect(handler().methodName("cancel"))
+                .andExpect(status().is4xxClientError())
+        ;
+
+        assertThat(likeablePersonService.findById(3L).isPresent()).isEqualTo(true);
     }
 }
