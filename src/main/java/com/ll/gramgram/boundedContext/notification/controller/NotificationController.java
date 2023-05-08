@@ -26,11 +26,11 @@ public class NotificationController {
             return rq.redirectWithMsg("/usr/instaMember/connect", "먼저 본인의 인스타그램 아이디를 입력해주세요.");
         }
 
-        List<Notification> notifications = notificationService.findByToInstaMemberAndReadDateIsNull(rq.getMember().getInstaMember());
+        List<Notification> notifications = notificationService.findByToInstaMember(rq.getMember().getInstaMember());
+
+        notificationService.markAsRead(notifications);
 
         model.addAttribute("notifications", notifications);
-
-        notificationService.readNotification(rq.getMember().getInstaMember());
 
         return "usr/notification/list";
     }

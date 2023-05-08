@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Slf4j
 public class NotificationEventListener {
-
     private final NotificationService notificationService;
 
     @EventListener
