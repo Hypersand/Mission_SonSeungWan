@@ -1,6 +1,7 @@
 package com.ll.gramgram.standard.util;
 
-import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,28 +10,48 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Map;
 
 public class Ut {
+    public static class json {
+
+        public static String toStr(Map map) {
+            try {
+                return new ObjectMapper().writeValueAsString(map);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    ;
+
     public static class time {
-        public static String convertCoolTimeToHoursAndMinutes(long remainingCoolTime) {
+        public static String diffFormat1Human(LocalDateTime time1, LocalDateTime time2) {
+            String suffix = time1.isAfter(time2) ? "전" : "후";
 
-            long hour = remainingCoolTime / 3600;
-            remainingCoolTime %= 3600;
-            long min = remainingCoolTime / 60;
-            remainingCoolTime %= 60;
+            // 두개의 시간의 차이를 초로 환산
+            long diff = Math.abs(ChronoUnit.SECONDS.between(time1, time2));
 
-            if (remainingCoolTime > 0) {
-                min += 1;
-            }
+            long diffSeconds = diff % 60; // 초 부분만
+            long diffMinutes = diff / (60) % 60; // 분 부분만
+            long diffHours = diff / (60 * 60) % 24; // 시간 부분만
+            long diffDays = diff / (60 * 60 * 24); // 나머지는 일 부분으로
 
-            if (min == 60) {
-                hour += 1;
-                min = 0;
-            }
+            StringBuilder sb = new StringBuilder();
 
-            return hour + "시간 " + min + "분 ";
+            if (diffDays > 0) sb.append(diffDays).append("일 ");
+            if (diffHours > 0) sb.append(diffHours).append("시간 ");
+            if (diffMinutes > 0) sb.append(diffMinutes).append("분 ");
+            if (diffSeconds > 0) sb.append(diffSeconds).append("초 ");
+
+            if (sb.isEmpty()) sb.append("1초 ");
+
+            return sb.append(suffix).toString();
         }
     }
 

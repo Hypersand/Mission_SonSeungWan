@@ -2,11 +2,11 @@ package com.ll.gramgram.boundedContext.notification.entity;
 
 import com.ll.gramgram.base.baseEntity.BaseEntity;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
+import com.ll.gramgram.standard.util.Ut;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -31,6 +31,22 @@ public class Notification extends BaseEntity {
     private String newGender; // 해당사항 없으면 null
     private int newAttractiveTypeCode; // 해당사항 없으면 0
 
+    public boolean isRead() {
+        return readDate != null;
+    }
+
+    public void markAsRead() {
+        readDate = LocalDateTime.now();
+    }
+
+    public String getCreateDateAfterStrHuman() {
+        return Ut.time.diffFormat1Human(LocalDateTime.now(), getCreateDate());
+    }
+
+    public boolean isHot() {
+        // 만들어진지 60분이 안되었다면 hot 으로 설정
+        return getCreateDate().isAfter(LocalDateTime.now().minusMinutes(60));
+    }
 
     public String getOldAttractiveTypeDisplayName() {
         return switch (oldAttractiveTypeCode) {
@@ -39,6 +55,7 @@ public class Notification extends BaseEntity {
             default -> "능력";
         };
     }
+
     public String getNewAttractiveTypeDisplayName() {
         return switch (newAttractiveTypeCode) {
             case 1 -> "외모";
@@ -47,20 +64,10 @@ public class Notification extends BaseEntity {
         };
     }
 
-    public String getGenderDisplayName() {
-        if (fromInstaMember.getGender().equals("M")) {
-            return "남자";
-        }
-
-        return "여자";
-    }
-
-    public void markAsRead() {
-        this.readDate = LocalDateTime.now();
-    }
-
-    public boolean isHot() {
-        // 만들어진지 60분이 안되었다면 hot 으로 설정
-        return getCreateDate().isAfter(LocalDateTime.now().minusMinutes(60));
+    public String getNewGenderDisplayName() {
+        return switch (newGender) {
+            case "W" -> "여성";
+            default -> "남성";
+        };
     }
 }

@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.notification.service;
 
+
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import com.ll.gramgram.boundedContext.member.service.MemberService;
@@ -21,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class NotificationServiceTest {
+public class NotificationServiceTests {
     @Autowired
     private MemberService memberService;
     @Autowired
@@ -43,7 +44,7 @@ public class NotificationServiceTest {
         List<Notification> notifications = notificationService.findByToInstaMember(memberUser5.getInstaMember());
 
         // 그중에 최신 알림 가져오기
-        Notification lastNotification = notifications.get(notifications.size() - 1);
+        Notification lastNotification = notifications.get(0);
 
         // 보낸이의 인스타 아이디가 insta_user3 인지 체크
         assertThat(lastNotification.getFromInstaMember().getUsername()).isEqualTo("insta_user3");
@@ -67,7 +68,7 @@ public class NotificationServiceTest {
         List<Notification> notifications = notificationService.findByToInstaMember(memberUser4.getInstaMember());
 
         // 그중에 최신 알림 가져오기
-        Notification lastNotification = notifications.get(notifications.size() - 1);
+        Notification lastNotification = notifications.get(0);
 
         // 보낸이의 인스타 아이디가 insta_user3 인지 체크
         assertThat(lastNotification.getFromInstaMember().getUsername()).isEqualTo("insta_user3");
