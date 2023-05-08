@@ -10,6 +10,8 @@ import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
+import com.ll.gramgram.boundedContext.notification.entity.Notification;
+import com.ll.gramgram.boundedContext.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class LikeablePersonService {
     private final LikeablePersonRepository likeablePersonRepository;
     private final InstaMemberService instaMemberService;
     private final ApplicationEventPublisher publisher;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public RsData<LikeablePerson> like(Member actor, String username, int attractiveTypeCode) {
@@ -48,7 +51,17 @@ public class LikeablePersonService {
                 .modifyUnlockDate(AppConfig.genLikeablePersonModifyUnlockDate())
                 .build();
 
+        Notification notification = Notification
+                .builder()
+                .toInstaMember(toInstaMember)
+                .fromInstaMember(fromInstaMember)
+                .typeCode("Like")
+                .oldAttractiveTypeCode(0)
+                .newAttractiveTypeCode(attractiveTypeCode)
+                .build();
+
         likeablePersonRepository.save(likeablePerson); // 저장
+        notificationRepository.save(notification);
 
         // 너가 좋아하는 호감표시 생겼어.
         fromInstaMember.addFromLikeablePerson(likeablePerson);
@@ -164,8 +177,20 @@ public class LikeablePersonService {
 
         String oldAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
         String username = likeablePerson.getToInstaMember().getUsername();
+        int oldAttractiveTypeCode = likeablePerson.getAttractiveTypeCode();
 
         modifyAttractionTypeCode(likeablePerson, attractiveTypeCode);
+
+        Notification notification = Notification
+                .builder()
+                .toInstaMember(likeablePerson.getToInstaMember())
+                .fromInstaMember(likeablePerson.getFromInstaMember())
+                .oldAttractiveTypeCode(oldAttractiveTypeCode)
+                .newAttractiveTypeCode(attractiveTypeCode)
+                .typeCode("ModifyAttractiveType")
+                .build();
+
+        notificationRepository.save(notification);
 
         String newAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
 
