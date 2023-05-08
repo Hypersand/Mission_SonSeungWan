@@ -51,17 +51,7 @@ public class LikeablePersonService {
                 .modifyUnlockDate(AppConfig.genLikeablePersonModifyUnlockDate())
                 .build();
 
-        Notification notification = Notification
-                .builder()
-                .toInstaMember(toInstaMember)
-                .fromInstaMember(fromInstaMember)
-                .typeCode("Like")
-                .oldAttractiveTypeCode(0)
-                .newAttractiveTypeCode(attractiveTypeCode)
-                .build();
-
         likeablePersonRepository.save(likeablePerson); // 저장
-        notificationRepository.save(notification);
 
         // 너가 좋아하는 호감표시 생겼어.
         fromInstaMember.addFromLikeablePerson(likeablePerson);
