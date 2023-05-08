@@ -30,7 +30,7 @@
                                 <span class="badge badge-primary"
                                       th:text="${#temporals.format(notification.createDate,'yy.MM.dd HH:mm')}">
                                 </span>
-                                <i class="fa-solid fa-fire text-red-500"></i>
+                                <i th:if="${notification.isHot()}" class="fa-solid fa-fire text-red-500"></i>
                             </div>
                         </div>
                         <div class="mt-4 flex flex-col gap-2">
