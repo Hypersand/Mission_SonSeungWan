@@ -263,4 +263,124 @@ public class LikeablePersonServiceTests {
                 likeablePersonToBts.getModifyUnlockDate().isAfter(coolTime)
         ).isTrue();
     }
+
+    @Test
+    @DisplayName("나를 좋아하는 남자 회원 필터링")
+    void t009() throws Exception {
+
+        //given
+        //나를 좋아하는 회원은 현재 NotProd에서 남자 1명, 여자 1명 만들어 놓은 상태
+        long toInstaMemberId = 6;
+        String gender = "M";
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, gender, null);
+
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(1);
+        assertThat(likeablePeople.get(0).getAttractiveTypeCode()).isEqualTo(2);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("M");
+    }
+
+    @Test
+    @DisplayName("나를 좋아하는 여자 회원 필터링")
+    void t010() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+        String gender = "W";
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, gender, null);
+
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(1);
+        assertThat(likeablePeople.get(0).getAttractiveTypeCode()).isEqualTo(1);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("W");
+    }
+
+    @Test
+    @DisplayName("나를 좋아하는 모든 회원 필터링")
+    void t011() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, null);
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("나를 좋아하는 모든 회원 필터링")
+    void t012() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, null);
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("나를 외모 때문에 좋아하는 회원 필터링")
+    void t013() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+        Integer attractiveTypeCode = 1;
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, attractiveTypeCode);
+
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(1);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("W");
+        assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("외모");
+    }
+
+    @Test
+    @DisplayName("나를 성격 때문에 좋아하는 회원 필터링")
+    void t014() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+        Integer attractiveTypeCode = 2;
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, attractiveTypeCode);
+
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(1);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("성격");
+    }
+
+    @Test
+    @DisplayName("나를 성격 때문에 좋아하는 남자 회원 필터링")
+    void t015() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+        String gender = "M";
+        Integer attractiveTypeCode = 2;
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, gender, attractiveTypeCode);
+
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(1);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("성격");
+    }
 }
