@@ -12,6 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,26 +59,39 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
         return result;
     }
 
-    private OrderSpecifier<?> sortLikeablePeople(Integer sortCode) {
+    private OrderSpecifier[] sortLikeablePeople(Integer sortCode) {
+
+        List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
 
         if (sortCode == null) {
-            return new OrderSpecifier(Order.ASC, NullExpression.DEFAULT, NullHandling.Default);
+            orderSpecifiers.add(new OrderSpecifier(Order.ASC, NullExpression.DEFAULT, NullHandling.Default));
+            return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
         }
 
         switch (sortCode) {
             case 1:
-                return new OrderSpecifier<>(Order.DESC, likeablePerson.id);
+                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
             case 2:
-                return new OrderSpecifier<>(Order.ASC, likeablePerson.createDate);
+                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.createDate));
             //인기 많은 순
             case 3:
-                return new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.toLikeablePeople.size());
+                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.toLikeablePeople.size()));
             //인기 적은 순
             case 4:
-                return new OrderSpecifier<>(Order.ASC, likeablePerson.fromInstaMember.toLikeablePeople.size());
+                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.fromInstaMember.toLikeablePeople.size()));
+            case 5:
+                //여자 - 남자
+                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.gender));
+                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
+            case 6:
+                //외모 - 성격 - 능력
+                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.attractiveTypeCode));
+                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
             default:
-                return new OrderSpecifier<>(Order.DESC, likeablePerson.id);
+                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
         }
+
+        return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
     }
 
     private BooleanExpression eqToInstaMemberId(long toInstaMemberId) {
