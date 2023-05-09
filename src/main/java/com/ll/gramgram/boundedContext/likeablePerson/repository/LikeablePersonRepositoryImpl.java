@@ -2,15 +2,21 @@ package com.ll.gramgram.boundedContext.likeablePerson.repository;
 
 import com.ll.gramgram.boundedContext.likeablePerson.dto.LikeablePersonDto;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
+import com.querydsl.core.types.NullExpression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.ll.gramgram.boundedContext.likeablePerson.entity.QLikeablePerson.likeablePerson;
+import static com.querydsl.core.types.OrderSpecifier.*;
 
 @RequiredArgsConstructor
 public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCustom {
@@ -36,6 +42,7 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
 
         String gender = likeablePersonDto.getGender();
         Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
+        Integer sortCode = likeablePersonDto.getSortCode();
 
         List<LikeablePerson> result = jpaQueryFactory
                 .selectFrom(likeablePerson)
@@ -44,9 +51,28 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
                         eqGender(gender),
                         eqAttractiveTypeCode(attractiveTypeCode)
                 )
+                .orderBy((sortLikeablePeople(sortCode)))
                 .fetch();
 
         return result;
+    }
+
+    private OrderSpecifier<?> sortLikeablePeople(Integer sortCode) {
+
+        if (sortCode == null) {
+            return new OrderSpecifier(Order.ASC, NullExpression.DEFAULT, NullHandling.Default);
+        }
+
+        switch (sortCode) {
+            case 1:
+                return new OrderSpecifier<>(Order.DESC, likeablePerson.id);
+            case 2:
+                return new OrderSpecifier<>(Order.ASC, likeablePerson.createDate);
+//            case 3: //인기가 많다 = 호감표시를 많이 받았다
+//                return new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.)
+            default:
+                return new OrderSpecifier<>(Order.DESC, likeablePerson.id);
+        }
     }
 
     private BooleanExpression eqToInstaMemberId(long toInstaMemberId) {

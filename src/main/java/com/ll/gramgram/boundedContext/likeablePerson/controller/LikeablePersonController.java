@@ -11,6 +11,9 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -128,8 +131,6 @@ public class LikeablePersonController {
 
         // 인스타인증을 했는지 체크
         if (instaMember != null) {
-            String gender = likeablePersonDto.getGender();
-            Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
 
             List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(instaMember.getId(), likeablePersonDto);
             model.addAttribute("likeablePeople", likeablePeople);
