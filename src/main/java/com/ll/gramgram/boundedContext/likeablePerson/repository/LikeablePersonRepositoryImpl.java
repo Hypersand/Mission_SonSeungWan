@@ -6,19 +6,20 @@ import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.ll.gramgram.boundedContext.likeablePerson.entity.QLikeablePerson.likeablePerson;
-import static com.querydsl.core.types.OrderSpecifier.*;
+import static com.querydsl.core.types.OrderSpecifier.NullHandling;
 
 @RequiredArgsConstructor
+@Slf4j
 public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -68,8 +69,12 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
                 return new OrderSpecifier<>(Order.DESC, likeablePerson.id);
             case 2:
                 return new OrderSpecifier<>(Order.ASC, likeablePerson.createDate);
-//            case 3: //인기가 많다 = 호감표시를 많이 받았다
-//                return new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.)
+            //인기 많은 순
+            case 3:
+                return new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.toLikeablePeople.size());
+            //인기 적은 순
+            case 4:
+                return new OrderSpecifier<>(Order.ASC, likeablePerson.fromInstaMember.toLikeablePeople.size());
             default:
                 return new OrderSpecifier<>(Order.DESC, likeablePerson.id);
         }
