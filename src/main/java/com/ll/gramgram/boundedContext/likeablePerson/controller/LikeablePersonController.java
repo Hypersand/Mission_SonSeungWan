@@ -3,6 +3,7 @@ package com.ll.gramgram.boundedContext.likeablePerson.controller;
 import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
+import com.ll.gramgram.boundedContext.likeablePerson.dto.LikeablePersonDto;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
 import jakarta.validation.Valid;
@@ -122,14 +123,16 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/toList")
-    public String showToList(Model model, @RequestParam(required = false) String gender,
-    @RequestParam(required = false) Long attractiveTypeCode, @RequestParam(required = false) Long sortCode) {
+    public String showToList(Model model, LikeablePersonDto likeablePersonDto, @RequestParam(required = false) Long sortCode) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
         // 인스타인증을 했는지 체크
         if (instaMember != null) {
+            String gender = likeablePersonDto.getGender();
+            Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
+
             if (gender != null) {
-                List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGender(instaMember.getId(), gender);
+                List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(instaMember.getId(), gender, attractiveTypeCode);
                 model.addAttribute("likeablePeople", likeablePeople);
             }
 

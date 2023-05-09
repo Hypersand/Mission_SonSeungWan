@@ -223,4 +223,8 @@ public class LikeablePersonService {
     public List<LikeablePerson> findLikeablePeopleByGender(long toInstaMemberId, String gender) {
         return likeablePersonRepository.findByToInstaMemberIdAndFromInstaMember_Gender(toInstaMemberId, gender);
     }
+
+    public List<LikeablePerson> findLikeablePeopleByGenderAndAttributeType(long toInstaMemberId, String gender, Integer attractiveTypeCode) {
+        return likeablePersonRepository.findQslByGenderAndAttractiveTypeCode(toInstaMemberId, gender, attractiveTypeCode);
+    }
 }
