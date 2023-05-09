@@ -4,6 +4,7 @@ package com.ll.gramgram.boundedContext.likeablePerson.service;
 import com.ll.gramgram.TestUt;
 import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
+import com.ll.gramgram.boundedContext.likeablePerson.dto.LikeablePersonDto;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
@@ -269,18 +270,19 @@ public class LikeablePersonServiceTests {
     void t009() throws Exception {
 
         //given
-        //나를 좋아하는 회원은 현재 NotProd에서 남자 1명, 여자 1명 만들어 놓은 상태
+        //나를 좋아하는 회원은 현재 NotProd에서 남자 2명, 여자 1명 만들어 놓은 상태
         long toInstaMemberId = 6;
         String gender = "M";
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(gender, null, null);
 
         //when
-        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, gender, null);
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
 
 
         //then
-        assertThat(likeablePeople.size()).isEqualTo(1);
-        assertThat(likeablePeople.get(0).getAttractiveTypeCode()).isEqualTo(2);
+        assertThat(likeablePeople.size()).isEqualTo(2);
         assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(1).getFromInstaMember().getGender()).isEqualTo("M");
     }
 
     @Test
@@ -290,9 +292,10 @@ public class LikeablePersonServiceTests {
         //given
         long toInstaMemberId = 6;
         String gender = "W";
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(gender, null, null);
 
         //when
-        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, gender, null);
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
 
 
         //then
@@ -307,38 +310,27 @@ public class LikeablePersonServiceTests {
 
         //given
         long toInstaMemberId = 6;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(null, null, null);
 
         //when
-        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, null);
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
 
         //then
-        assertThat(likeablePeople.size()).isEqualTo(2);
+        assertThat(likeablePeople.size()).isEqualTo(3);
     }
 
+
     @Test
-    @DisplayName("나를 좋아하는 모든 회원 필터링")
+    @DisplayName("나를 외모 때문에 좋아하는 회원 필터링")
     void t012() throws Exception {
 
         //given
         long toInstaMemberId = 6;
-
-        //when
-        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, null);
-
-        //then
-        assertThat(likeablePeople.size()).isEqualTo(2);
-    }
-
-    @Test
-    @DisplayName("나를 외모 때문에 좋아하는 회원 필터링")
-    void t013() throws Exception {
-
-        //given
-        long toInstaMemberId = 6;
         Integer attractiveTypeCode = 1;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(null, attractiveTypeCode, null);
 
         //when
-        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, attractiveTypeCode);
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
 
 
         //then
@@ -349,14 +341,15 @@ public class LikeablePersonServiceTests {
 
     @Test
     @DisplayName("나를 성격 때문에 좋아하는 회원 필터링")
-    void t014() throws Exception {
+    void t013() throws Exception {
 
         //given
         long toInstaMemberId = 6;
         Integer attractiveTypeCode = 2;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(null, attractiveTypeCode, null);
 
         //when
-        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, null, attractiveTypeCode);
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
 
 
         //then
@@ -367,15 +360,16 @@ public class LikeablePersonServiceTests {
 
     @Test
     @DisplayName("나를 성격 때문에 좋아하는 남자 회원 필터링")
-    void t015() throws Exception {
+    void t014() throws Exception {
 
         //given
         long toInstaMemberId = 6;
         String gender = "M";
         Integer attractiveTypeCode = 2;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(gender, attractiveTypeCode, null);
 
         //when
-        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(toInstaMemberId, gender, attractiveTypeCode);
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
 
 
         //then
@@ -383,4 +377,93 @@ public class LikeablePersonServiceTests {
         assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("M");
         assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("성격");
     }
+
+    @Test
+    @DisplayName("나를 좋아하는 회원 리스트를 최신순으로 정렬")
+    void t015() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+        Integer sortCode = 1;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(null, null, sortCode);
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(3);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("능력");
+        assertThat(likeablePeople.get(1).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(1).getAttractiveTypeDisplayName()).isEqualTo("성격");
+        assertThat(likeablePeople.get(2).getFromInstaMember().getGender()).isEqualTo("W");
+        assertThat(likeablePeople.get(2).getAttractiveTypeDisplayName()).isEqualTo("외모");
+    }
+
+    @Test
+    @DisplayName("나를 좋아하는 회원 리스트를 날짜순으로 정렬")
+    void t016() throws Exception {
+
+        //given
+        long toInstaMemberId = 6;
+        Integer sortCode = 2;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(null, null, sortCode);
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(3);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("W");
+        assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("외모");
+        assertThat(likeablePeople.get(1).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(1).getAttractiveTypeDisplayName()).isEqualTo("성격");
+        assertThat(likeablePeople.get(2).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(2).getAttractiveTypeDisplayName()).isEqualTo("능력");
+    }
+
+    @Test
+    @DisplayName("나를 좋아하는 회원 리스트를 인기 많은 순으로 정렬")
+    void t017() throws Exception {
+        //instaMember3 : 2개, instaMember4 : 1개, instaMember2 : 0개
+        //given
+        long toInstaMemberId = 6;
+        Integer sortCode = 3;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(null, null, sortCode);
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(3);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("W");
+        assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("외모");
+        assertThat(likeablePeople.get(1).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(1).getAttractiveTypeDisplayName()).isEqualTo("능력");
+        assertThat(likeablePeople.get(2).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(2).getAttractiveTypeDisplayName()).isEqualTo("성격");
+    }
+
+    @Test
+    @DisplayName("나를 좋아하는 회원 리스트를 인기 적은 순으로 정렬")
+    void t018() throws Exception {
+        //instaMember3 : 2개, instaMember4 : 1개, instaMember2 : 0개
+        //given
+        long toInstaMemberId = 6;
+        Integer sortCode = 4;
+        LikeablePersonDto likeablePersonDto = new LikeablePersonDto(null, null, sortCode);
+
+        //when
+        List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(toInstaMemberId, likeablePersonDto);
+
+        //then
+        assertThat(likeablePeople.size()).isEqualTo(3);
+        assertThat(likeablePeople.get(0).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(0).getAttractiveTypeDisplayName()).isEqualTo("성격");
+        assertThat(likeablePeople.get(1).getFromInstaMember().getGender()).isEqualTo("M");
+        assertThat(likeablePeople.get(1).getAttractiveTypeDisplayName()).isEqualTo("능력");
+        assertThat(likeablePeople.get(2).getFromInstaMember().getGender()).isEqualTo("W");
+        assertThat(likeablePeople.get(2).getAttractiveTypeDisplayName()).isEqualTo("외모");
+    }
+
 }
