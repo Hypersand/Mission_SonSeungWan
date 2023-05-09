@@ -131,16 +131,8 @@ public class LikeablePersonController {
             String gender = likeablePersonDto.getGender();
             Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
 
-            if (gender != null) {
-                List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(instaMember.getId(), gender, attractiveTypeCode);
-                model.addAttribute("likeablePeople", likeablePeople);
-            }
-
-            else {
-                // 해당 인스타회원이 좋아하는 사람들 목록
-                List<LikeablePerson> likeablePeople = instaMember.getToLikeablePeople();
-                model.addAttribute("likeablePeople", likeablePeople);
-            }
+            List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(instaMember.getId(), gender, attractiveTypeCode);
+            model.addAttribute("likeablePeople", likeablePeople);
         }
 
         return "usr/likeablePerson/toList";
