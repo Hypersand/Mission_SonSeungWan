@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.repository;
 
+import com.ll.gramgram.boundedContext.likeablePerson.dto.LikeablePersonDto;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
@@ -30,9 +31,12 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
         );
     }
 
-    //toInstaMemberId 값, fromInstaMember의 gender, fromInstaMember의 attractiveTypeCode로 리스트 반환
     @Override
-    public List<LikeablePerson> findQslByGenderAndAttractiveTypeCode(long toInstaMemberId, String gender, Integer attractiveTypeCode) {
+    public List<LikeablePerson> findQslByAllParameters(long toInstaMemberId, LikeablePersonDto likeablePersonDto) {
+
+        String gender = likeablePersonDto.getGender();
+        Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
+
         List<LikeablePerson> result = jpaQueryFactory
                 .selectFrom(likeablePerson)
                 .where(

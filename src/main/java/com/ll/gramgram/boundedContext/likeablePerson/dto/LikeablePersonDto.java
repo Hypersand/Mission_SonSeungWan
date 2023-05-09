@@ -8,4 +8,6 @@ public class LikeablePersonDto {
     String gender;
     Integer attractiveTypeCode;
 
+    Integer sortCode;
+
 }

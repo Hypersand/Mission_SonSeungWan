@@ -7,6 +7,7 @@ import com.ll.gramgram.base.event.EventBeforeCancelLike;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
+import com.ll.gramgram.boundedContext.likeablePerson.dto.LikeablePersonDto;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
@@ -224,7 +225,7 @@ public class LikeablePersonService {
         return likeablePersonRepository.findByToInstaMemberIdAndFromInstaMember_Gender(toInstaMemberId, gender);
     }
 
-    public List<LikeablePerson> findLikeablePeopleByGenderAndAttributeType(long toInstaMemberId, String gender, Integer attractiveTypeCode) {
-        return likeablePersonRepository.findQslByGenderAndAttractiveTypeCode(toInstaMemberId, gender, attractiveTypeCode);
+    public List<LikeablePerson> findLikeablePeople(long toInstaMemberId, LikeablePersonDto likeablePersonDto) {
+        return likeablePersonRepository.findQslByAllParameters(toInstaMemberId, likeablePersonDto);
     }
 }

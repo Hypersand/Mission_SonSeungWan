@@ -123,7 +123,7 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/toList")
-    public String showToList(Model model, LikeablePersonDto likeablePersonDto, @RequestParam(required = false) Long sortCode) {
+    public String showToList(Model model, LikeablePersonDto likeablePersonDto) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
         // 인스타인증을 했는지 체크
@@ -131,7 +131,7 @@ public class LikeablePersonController {
             String gender = likeablePersonDto.getGender();
             Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
 
-            List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeopleByGenderAndAttributeType(instaMember.getId(), gender, attractiveTypeCode);
+            List<LikeablePerson> likeablePeople = likeablePersonService.findLikeablePeople(instaMember.getId(), likeablePersonDto);
             model.addAttribute("likeablePeople", likeablePeople);
         }
 
