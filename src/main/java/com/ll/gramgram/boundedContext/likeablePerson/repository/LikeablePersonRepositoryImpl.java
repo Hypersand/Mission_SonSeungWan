@@ -2,7 +2,6 @@ package com.ll.gramgram.boundedContext.likeablePerson.repository;
 
 import com.ll.gramgram.boundedContext.likeablePerson.dto.LikeablePersonDto;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
-import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.ll.gramgram.boundedContext.likeablePerson.entity.QLikeablePerson.likeablePerson;
-import static com.querydsl.core.types.OrderSpecifier.NullHandling;
 
 @RequiredArgsConstructor
 @Slf4j
