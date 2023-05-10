@@ -6,7 +6,6 @@ import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -63,20 +62,16 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
 
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
 
-        if (sortCode == null) {
-            orderSpecifiers.add(new OrderSpecifier(Order.ASC, NullExpression.DEFAULT, NullHandling.Default));
-            return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
-        }
 
-        switch (sortCode) {
+        switch (sortCode != null ? sortCode : 1) {
             case 1:
                 orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
             case 2:
                 orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.createDate));
-            //인기 많은 순
+                //인기 많은 순
             case 3:
                 orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.toLikeablePeople.size()));
-            //인기 적은 순
+                //인기 적은 순
             case 4:
                 orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.fromInstaMember.toLikeablePeople.size()));
             case 5:
