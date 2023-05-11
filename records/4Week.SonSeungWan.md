@@ -1,11 +1,16 @@
 # 필수미션
 ## 필수미션1 
 - [X] : application-prod.yml의 baseUrl 세팅
-- [X] : 카카오, 네이버, 구글, 페이스북의 개발자 페이지에서 도메인에 맞는 Redirect Uri 추가  
+- [X] : 카카오, 네이버, 구글, 페이스북의 개발자 페이지에서 도메인에 맞는 Redirect Uri 추가
+- [X] : [https://www.codelionbigsand.shop](https://www.codelionbigsand.shop)
 
 ## 필수미션2, 선택미션2
+### LikeablePersonDto
+- [X] : 클라이언트의 요청으로 받는 쿼리 파라미터들을 필드로 설정
+- [X] : `Integer`로 선언하여 빈 문자가 들어왔을 때 스프링의 데이터 바인딩에 의해 `null`값으로 처리 된다.
+
 ### LikeablePersonController
-- [X] : 성별과 호감사유 쿼리스트링을 저장하는 데이터 전송 객체 생성
+- [X] : 성별과 호감사유 쿼리스트링을 저장하는 데이터 전송 객체를 매개변수로 받는다.
 - [X] : likeablePersonService로 현재 접속한 사용자의 인스타 아이디와 
 데이터 전송 객체를 보내서 likeablePerson list를 받는다.
 
@@ -17,6 +22,7 @@
 ### LikeablePersonRepositoryImpl
 - [X] : 위의 메서드를 오버라이드해서 구현한다.
 - [X] : 파라미터로 받은 성별과 호감사유를 통해 적절한 동적 쿼리 생성
+- [X] : `BooleanExpression`을 통해 where에 적절한 조건문 생성
 - [X] : 동적 쿼리를 통해 생성한 likeablePerson list를 반환한다.
 
 ---
@@ -34,6 +40,8 @@
   - [X] 날짜순
     - `likeablePerson.createDate`를 기준으로 오름차순으로 정렬
   - [X] 인기 많은 순
+    - `instaMemberBase`에 likes 필드를 추가함.
+    - 호감 표시, 삭제 시 이벤트 리스너를 통해 likes 필드의 값을 갱신
     - `likeablePerson.fromInstaMember.toLikeablePeople.size()` 내림차순 정렬
   - [X] 인기 적은 순
     - `likeablePerson.fromInstaMember.toLikeablePeople.size()` 오름차순 정렬
