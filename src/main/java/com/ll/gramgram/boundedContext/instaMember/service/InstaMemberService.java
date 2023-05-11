@@ -108,6 +108,7 @@ public class InstaMemberService {
         InstaMember toInstaMember = likeablePerson.getToInstaMember();
 
         toInstaMember.increaseLikesCount(fromInstaMember.getGender(), likeablePerson.getAttractiveTypeCode());
+        toInstaMember.updateLikes();
 
         InstaMemberSnapshot snapshot = toInstaMember.snapshot("Like");
 
@@ -121,6 +122,7 @@ public class InstaMemberService {
         InstaMember toInstaMember = likeablePerson.getToInstaMember();
 
         toInstaMember.decreaseLikesCount(fromInstaMember.getGender(), likeablePerson.getAttractiveTypeCode());
+        toInstaMember.updateLikes();
 
         InstaMemberSnapshot snapshot = toInstaMember.snapshot("CancelLike");
 

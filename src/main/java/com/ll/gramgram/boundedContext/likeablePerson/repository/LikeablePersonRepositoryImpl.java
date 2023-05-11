@@ -43,7 +43,7 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
         Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
         Integer sortCode = likeablePersonDto.getSortCode();
 
-        List<LikeablePerson> result = jpaQueryFactory
+        List<LikeablePerson> likeablePeople = jpaQueryFactory
                 .selectFrom(likeablePerson)
                 .where(
                         eqToInstaMemberId(toInstaMemberId),
@@ -53,7 +53,7 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
                 .orderBy((sortLikeablePeople(sortCode)))
                 .fetch();
 
-        return result;
+        return likeablePeople;
     }
 
     private OrderSpecifier[] sortLikeablePeople(Integer sortCode) {
@@ -64,23 +64,26 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
         switch (sortCode != null ? sortCode : 1) {
             case 1:
                 orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
+                break;
             case 2:
-                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.createDate));
+                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.id));
+                break;
                 //인기 많은 순
             case 3:
-                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.toLikeablePeople.size()));
+                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.likes));
+                break;
                 //인기 적은 순
             case 4:
-                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.fromInstaMember.toLikeablePeople.size()));
+                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.fromInstaMember.likes));
+                break;
             case 5:
                 //여자 - 남자
                 orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.fromInstaMember.gender));
                 orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
+                break;
             case 6:
                 //외모 - 성격 - 능력
                 orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, likeablePerson.attractiveTypeCode));
-                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
-            default:
                 orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, likeablePerson.id));
         }
 
