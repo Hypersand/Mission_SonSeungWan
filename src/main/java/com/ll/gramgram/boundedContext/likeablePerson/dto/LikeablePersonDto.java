@@ -7,9 +7,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class LikeablePersonDto {
 
-    String gender;
-    Integer attractiveTypeCode;
+    private final String gender;
+    private final Integer attractiveTypeCode;
 
-    Integer sortCode;
+    private final Integer sortCode;
 
 }
