@@ -7,6 +7,7 @@ import com.ll.gramgram.base.event.EventBeforeCancelLike;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
+import com.ll.gramgram.boundedContext.likeablePerson.dto.ToListSearchForm;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
@@ -218,5 +219,13 @@ public class LikeablePersonService {
 
 
         return RsData.of("S-1", "호감사유변경이 가능합니다.");
+    }
+
+    public List<LikeablePerson> findLikeablePeopleByGender(long toInstaMemberId, String gender) {
+        return likeablePersonRepository.findByToInstaMemberIdAndFromInstaMember_Gender(toInstaMemberId, gender);
+    }
+
+    public List<LikeablePerson> findLikeablePeople(long toInstaMemberId, ToListSearchForm toListSearchForm) {
+        return likeablePersonRepository.findQslByAllParameters(toInstaMemberId, toListSearchForm);
     }
 }
