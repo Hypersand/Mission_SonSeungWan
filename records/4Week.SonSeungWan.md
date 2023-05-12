@@ -5,7 +5,7 @@
 - [X] : [https://www.codelionbigsand.shop](https://www.codelionbigsand.shop)
 
 ## 필수미션2, 선택미션2
-### LikeablePersonDto
+### ToListSearchForm
 - [X] : 클라이언트의 요청으로 받는 쿼리 파라미터들을 필드로 설정
 - [X] : `Integer`로 선언하여 빈 문자가 들어왔을 때 스프링의 데이터 바인딩에 의해 `null`값으로 처리 된다.
 
@@ -65,5 +65,5 @@
 - 선택미션3의 정렬 기능은 `sortCode`에 따른 적절한 정렬 기준 `OrderSpecifier` 배열을 반환하는 메서드를 작성했다.
 
 ### **[특이사항]**
-- 데이터 전달 객체인 `LikeablePersonDto`를 컨트롤러부터 리포지토리까지 전송하는데 이게 효율적인 전달 방법일까??
+- 데이터 전달 객체인 `ToListSearchForm`를 컨트롤러부터 리포지토리까지 전송하는데 이게 효율적인 전달 방법일까??
 - 테스트 코드가 너무 단순무식하단 생각이 들었다.

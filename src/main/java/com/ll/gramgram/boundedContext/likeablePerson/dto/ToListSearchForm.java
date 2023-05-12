@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LikeablePersonDto {
+public class ToListSearchForm {
 
     private final String gender;
     private final Integer attractiveTypeCode;

@@ -1,6 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.repository;
 
-import com.ll.gramgram.boundedContext.likeablePerson.dto.LikeablePersonDto;
+import com.ll.gramgram.boundedContext.likeablePerson.dto.ToListSearchForm;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -37,11 +37,11 @@ public class LikeablePersonRepositoryImpl implements LikeablePersonRepositoryCus
     }
 
     @Override
-    public List<LikeablePerson> findQslByAllParameters(long toInstaMemberId, LikeablePersonDto likeablePersonDto) {
+    public List<LikeablePerson> findQslByAllParameters(long toInstaMemberId, ToListSearchForm toListSearchForm) {
 
-        String gender = likeablePersonDto.getGender();
-        Integer attractiveTypeCode = likeablePersonDto.getAttractiveTypeCode();
-        Integer sortCode = likeablePersonDto.getSortCode();
+        String gender = toListSearchForm.getGender();
+        Integer attractiveTypeCode = toListSearchForm.getAttractiveTypeCode();
+        Integer sortCode = toListSearchForm.getSortCode();
 
         List<LikeablePerson> likeablePeople = jpaQueryFactory
                 .selectFrom(likeablePerson)
