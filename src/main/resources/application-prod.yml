@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      host: 172.17.0.1
+      port: 6379
   autoconfigure:
     exclude:
   datasource:
@@ -14,9 +18,7 @@ spring:
         show_sql: false
         format_sql: false
         use_sql_comments: false
-  data:
-    redis:
-      host: 172.17.0.1
+
 logging:
   level:
     root: INFO
